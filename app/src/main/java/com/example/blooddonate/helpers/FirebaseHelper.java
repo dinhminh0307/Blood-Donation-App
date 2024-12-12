@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.blooddonate.callbacks.GetUserCallback;
 import com.example.blooddonate.callbacks.SignUpCallback;
 import com.example.blooddonate.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -59,5 +60,32 @@ public class FirebaseHelper {
                         }
                     }
                 });
+    }
+
+    public void getCurrentUser(GetUserCallback callback) {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            db.collection("users").document(userId).get()
+                    .addOnSuccessListener(document -> {
+                        if (document.exists()) {
+                            User user = document.toObject(User.class);
+                            if (user != null) {
+                                Log.d(TAG, "User retrieved: " + user.getName());
+                                callback.onSuccess(user);
+                            } else {
+                                callback.onFailure(new Exception("Failed to parse User object."));
+                            }
+                        } else {
+                            callback.onFailure(new Exception("User document does not exist."));
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "Error retrieving user document", e);
+                        callback.onFailure(e);
+                    });
+        } else {
+            callback.onFailure(new Exception("No authenticated user found."));
+        }
     }
 }
