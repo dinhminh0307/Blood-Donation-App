@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF7F7">
+
+    <!-- Top Background -->
+    <LinearLayout
+        android:id="@+id/top_background"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="#F44336"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- Title -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Site"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add details of the blood donation site"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Back Button -->
+        <TextView
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:gravity="center_vertical"
+            android:layout_gravity="end" />
+    </LinearLayout>
+
+    <!-- Form Content -->
+    <ScrollView
+        android:id="@+id/form_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/add_site_button"
+        android:layout_below="@id/top_background"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Name -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+
+            <EditText
+                android:id="@+id/site_name_input"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Enter site name"
+                android:padding="12dp"
+                android:background="@drawable/edit_text_background"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Blood Group -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Blood group"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+
+            <Spinner
+                android:id="@+id/blood_group_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/spinner_background"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Number of Units -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Number of Units"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+
+            <EditText
+                android:id="@+id/units_input"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Enter number of units"
+                android:padding="12dp"
+                android:background="@drawable/edit_text_background"
+                android:inputType="number"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Date -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+
+            <EditText
+                android:id="@+id/date_input"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Select date"
+                android:padding="12dp"
+                android:background="@drawable/edit_text_background"
+                android:drawableEnd="@drawable/ic_calendar"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Time -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Time"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+
+            <RadioGroup
+                android:id="@+id/time_radio_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <RadioButton
+                    android:id="@+id/radio_am"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="AM"
+                    android:textColor="#000000" />
+
+                <RadioButton
+                    android:id="@+id/radio_pm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PM"
+                    android:layout_marginStart="16dp"
+                    android:textColor="#000000" />
+            </RadioGroup>
+
+            <!-- Gender -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gender"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+
+            <Spinner
+                android:id="@+id/gender_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/spinner_background"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Add Site Button -->
+    <Button
+        android:id="@+id/add_site_button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:backgroundTint="#F44336"
+        android:text="Add Site"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:elevation="4dp"
+        android:layout_margin="16dp" />
+</RelativeLayout>

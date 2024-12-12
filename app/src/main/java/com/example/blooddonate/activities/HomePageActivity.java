@@ -17,6 +17,8 @@ import com.example.blooddonate.R;
 public class HomePageActivity extends AppCompatActivity {
     ImageView findSiteButton;
     TextView siteMap;
+
+    ImageView campaginAdd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +26,7 @@ public class HomePageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home_page);
         onFindSiteBtnClicked();
         onSiteMapClicked();
+        onCampaignClicked();
     }
 
     private void onFindSiteBtnClicked() {
@@ -43,6 +46,17 @@ public class HomePageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomePageActivity.this, MapsActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void onCampaignClicked() {
+        campaginAdd = findViewById(R.id.campaigns_icon);
+        campaginAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomePageActivity.this, AddSiteActivity.class);
                 startActivity(intent);
             }
         });
