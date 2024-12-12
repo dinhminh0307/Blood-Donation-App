@@ -23,13 +23,37 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="32dp" />
 
-        <!-- Email/Phone Input -->
+        <!-- Full Name Input -->
         <EditText
-            android:id="@+id/email_phone_input"
+            android:id="@+id/full_name_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="E-mail/Phone Number"
+            android:hint="Full Name"
+            android:inputType="textPersonName"
+            android:padding="12dp"
+            android:backgroundTint="#A9A9A9"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Email Input -->
+        <EditText
+            android:id="@+id/email_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="E-mail"
             android:inputType="textEmailAddress"
+            android:padding="12dp"
+            android:backgroundTint="#A9A9A9"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Phone Number Input -->
+        <EditText
+            android:id="@+id/phone_number_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Phone Number"
+            android:inputType="phone"
             android:padding="12dp"
             android:backgroundTint="#A9A9A9"
             android:textSize="16sp"
@@ -47,7 +71,6 @@
             android:textSize="16sp"
             android:drawableEnd="@drawable/ic_visibility_small"
             android:layout_marginBottom="16dp" />
-
 
         <!-- Confirm Password Input -->
         <EditText
@@ -120,8 +143,6 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:fontFamily="sans-serif-medium" />
-
-
 
     </LinearLayout>
 </ScrollView>
