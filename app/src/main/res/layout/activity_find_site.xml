@@ -71,6 +71,17 @@
             android:inputType="text"
             android:padding="12dp" />
 
+        <!-- Filter Icon -->
+        <ImageView
+            android:id="@+id/filter_icon"
+            android:layout_width="45dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+
+            android:contentDescription="Filter Icon"
+            android:src="@drawable/ic_filter" />
+
         <!-- Search Button -->
         <Button
             android:id="@+id/search_button"
@@ -85,12 +96,49 @@
             android:textStyle="bold" />
     </LinearLayout>
 
+    <!-- Tabs Section -->
+    <LinearLayout
+        android:id="@+id/tabs_section"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/top_background"
+        android:orientation="horizontal"
+        android:background="#FFFFFF"
+        android:elevation="4dp">
+
+        <!-- Received Requests Tab -->
+        <TextView
+            android:id="@+id/tab_received_requests"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Received Requests(6)"
+            android:textColor="#9E9E9E"
+            android:textSize="14sp"
+            android:background="#FFFFFF"
+            android:padding="12dp" />
+
+        <!-- My Requests Tab -->
+        <TextView
+            android:id="@+id/tab_my_requests"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="My Request(5)"
+            android:textColor="#F44336"
+            android:textSize="14sp"
+            android:background="#F8F8F8"
+            android:padding="12dp" />
+    </LinearLayout>
+
     <!-- Scrollable Request Content -->
     <ScrollView
         android:id="@+id/scrollable_requests"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/top_background"
+        android:layout_below="@id/tabs_section"
         android:layout_above="@id/bottom_nav"
         android:padding="16dp">
 
