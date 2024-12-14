@@ -82,10 +82,8 @@ public class AddSiteActivity extends AppCompatActivity {
                 int unit = Integer.parseInt(unitInput.getText().toString());
                 String selectedBloodGroup = bloodGroupSpinner.getSelectedItem().toString();
                 String selectedGender = genderSpinner.getSelectedItem().toString();
-                Map<String, Integer> bloodType = new HashMap<>();
-                bloodType.put(selectedBloodGroup, unit);
 
-                BloodDonationSite site = new BloodDonationSite(name, location, date, bloodType, 0, 0);
+                BloodDonationSite site = new BloodDonationSite(name, location, date, selectedBloodGroup, 0, 0);
                 donationSitesController.addSites(site);
             }
         });
