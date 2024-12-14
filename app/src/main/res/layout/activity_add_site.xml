@@ -128,15 +128,40 @@
                 android:textSize="14sp"
                 android:layout_marginBottom="4dp" />
 
-            <EditText
-                android:id="@+id/date_input"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:hint="Select date"
-                android:padding="12dp"
+                android:orientation="horizontal"
                 android:background="@drawable/edit_text_background"
-                android:drawableEnd="@drawable/ic_calendar"
-                android:layout_marginBottom="16dp" />
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp">
+
+                <!-- EditText for Date -->
+                <EditText
+                    android:id="@+id/date_input"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="Select date"
+                    android:padding="12dp"
+                    android:background="@android:color/transparent"
+                    android:inputType="date"
+                    android:focusable="true"
+                    android:clickable="true"
+                    android:textColor="#000000"
+                    android:textSize="14sp" />
+
+                <!-- Calendar Icon -->
+                <ImageView
+                    android:id="@+id/calendar_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_calendar"
+                    android:contentDescription="Calendar Icon" />
+            </LinearLayout>
+
+
+
 
             <!-- Time -->
             <TextView
