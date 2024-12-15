@@ -109,6 +109,7 @@ public class AddSiteActivity extends AppCompatActivity {
 
                 BloodDonationSite site = new BloodDonationSite(name, location, date, selectedBloodGroup, unit, 0);
                 donationSitesController.addSites(site);
+                finish();
             }
         });
 

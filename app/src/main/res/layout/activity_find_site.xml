@@ -35,12 +35,49 @@
             android:textSize="14sp" />
     </LinearLayout>
 
+    <!-- Search Section -->
+    <LinearLayout
+        android:id="@+id/search_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top_background"
+        android:orientation="horizontal"
+        android:background="#FFFFFF"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:gravity="center_vertical">
+
+        <!-- Search EditText -->
+        <EditText
+            android:id="@+id/search_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/edit_text_background"
+            android:hint="Search by name or location"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textColor="#000000"
+            android:textSize="14sp" />
+
+        <!-- Filter Icon -->
+        <ImageView
+            android:id="@+id/filter_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_filter"
+            android:contentDescription="Filter"
+            android:layout_marginStart="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="12dp" />
+    </LinearLayout>
+
     <!-- Tabs Section -->
     <LinearLayout
         android:id="@+id/tabs_section"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_below="@id/top_background"
+        android:layout_below="@id/search_section"
         android:orientation="horizontal"
         android:background="#FFFFFF"
         android:elevation="4dp">

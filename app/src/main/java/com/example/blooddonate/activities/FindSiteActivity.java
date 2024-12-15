@@ -2,6 +2,8 @@ package com.example.blooddonate.activities;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +17,7 @@ import com.example.blooddonate.R;
 import com.example.blooddonate.adapters.BloodDonationSiteAdapter;
 import com.example.blooddonate.callbacks.DataFetchCallback;
 import com.example.blooddonate.controllers.DonationSitesController;
+import com.example.blooddonate.dialogs.FilterDialogFragment;
 import com.example.blooddonate.models.BloodDonationSite;
 
 import java.util.ArrayList;
@@ -27,6 +30,8 @@ public class FindSiteActivity extends AppCompatActivity {
 
     BloodDonationSiteAdapter adapter;
 
+    ImageView filter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +41,28 @@ public class FindSiteActivity extends AppCompatActivity {
         donationSitesController = new DonationSitesController();
 
 
+        fetchSites();
+        onFIlterClicked();
+    }
+
+    private void onFIlterClicked() {
+        filter = findViewById(R.id.filter_icon);
+
+        filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FilterDialogFragment filterDialog = new FilterDialogFragment();
+                filterDialog.setFilterDialogListener((city, bloodType, date) -> {
+                    // Apply the filter logic here
+                    Log.d("Filters", "City: " + city + ", Blood Type: " + bloodType + ", Date: " + date);
+                    // Update the RecyclerView or data accordingly
+                });
+                filterDialog.show(getSupportFragmentManager(), "FilterDialog");
+            }
+        });
+    }
+
+    private void fetchSites() {
         siteRecycleView = findViewById(R.id.recycler_view);
         siteRecycleView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -60,8 +87,6 @@ public class FindSiteActivity extends AppCompatActivity {
                 Log.e("Firestore", "Error fetching donation sites", e);
             }
         });
-
     }
-
 
 }

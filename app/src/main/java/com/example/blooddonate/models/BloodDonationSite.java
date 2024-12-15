@@ -6,6 +6,9 @@ public class BloodDonationSite {
     private String name;
     private String location;
     private String date;
+
+    private String owner;
+
     private String bloodTypes; // Blood types and counts
     private double units; // Total blood units collected
     private int registeredCount; // Number of registered donors or attendees
@@ -31,6 +34,14 @@ public class BloodDonationSite {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public String getOwner() {
+        return this.owner;
     }
 
     public String getLocation() {
