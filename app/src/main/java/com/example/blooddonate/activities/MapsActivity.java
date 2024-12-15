@@ -122,7 +122,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Enable zoom controls
         mMap.getUiSettings().setZoomControlsEnabled(true);
 
-        getAllSiteMarker(); // fetch site data
+        // Set default camera position to Vietnam
+        LatLng vietnam = new LatLng(14.0583, 108.2772); // Coordinates for Vietnam's central location
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(vietnam, 6)); // Zoom level 6 for a regional view
+
+        getAllSiteMarker(); // Fetch site data
 
         if (isInteractive) {
             // Allow user to mark locations only if isInteractive is true
@@ -143,6 +147,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             });
         }
     }
+
 
     private String getAddressFromLatLng(LatLng latLng) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
