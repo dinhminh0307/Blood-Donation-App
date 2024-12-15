@@ -36,41 +36,63 @@
     </LinearLayout>
 
     <!-- Search Section -->
+    <!-- Search Section -->
     <LinearLayout
         android:id="@+id/search_section"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/top_background"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:background="#FFFFFF"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="12dp"
-        android:gravity="center_vertical">
+        android:paddingVertical="12dp">
 
-        <!-- Search EditText -->
-        <EditText
-            android:id="@+id/search_edit_text"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:background="@drawable/edit_text_background"
-            android:hint="Search by name or location"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:textColor="#000000"
-            android:textSize="14sp" />
+        <!-- Row with Search EditText and Filter Icon -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-        <!-- Filter Icon -->
-        <ImageView
-            android:id="@+id/filter_icon"
-            android:layout_width="50dp"
+            <!-- Search EditText -->
+            <EditText
+                android:id="@+id/search_edit_text"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@drawable/edit_text_background"
+                android:hint="Search by name or location"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textColor="#000000"
+                android:textSize="14sp" />
+
+            <!-- Filter Icon -->
+            <ImageView
+                android:id="@+id/filter_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_filter"
+                android:contentDescription="Filter"
+                android:layout_marginStart="12dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="12dp" />
+        </LinearLayout>
+
+        <!-- Search Button -->
+        <Button
+            android:id="@+id/search_button"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:src="@drawable/ic_filter"
-            android:contentDescription="Filter"
-            android:layout_marginStart="12dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="12dp" />
+            android:layout_gravity="end"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#F44336"
+            android:text="Search"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
     </LinearLayout>
+
+
 
     <!-- Tabs Section -->
     <LinearLayout

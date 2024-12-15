@@ -1,7 +1,6 @@
 package com.example.blooddonate.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +10,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.blooddonate.R;
 import com.example.blooddonate.models.BloodDonationSite;
+import com.example.blooddonate.services.SearchEngineService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonationSiteAdapter.ViewHolder> {
-    private List<BloodDonationSite> sites;
+    private List<BloodDonationSite> sites; // Main list of all sites
+    private List<BloodDonationSite> filteredSites; // Filtered list for display
     private Context context;
+
+    private SearchEngineService searchEngineService;
 
     public BloodDonationSiteAdapter(Context context, List<BloodDonationSite> sites) {
         this.context = context;
         this.sites = sites;
+        this.filteredSites = new ArrayList<>(sites); // Initialize filtered list
+        searchEngineService = new SearchEngineService();
     }
 
     @Override
@@ -31,35 +37,39 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        BloodDonationSite site = sites.get(position);
-
-        if (site != null) {
-            holder.bloodType.setText(site.getBloodTypes() != null ? site.getBloodTypes() : "N/A");
-            holder.bloodUnits.setText(site.getUnits() > 0 ? site.getUnits() + " Unit" : "No Units");
-            holder.siteName.setText(site.getName() != null ? site.getName() : "Unknown Site");
-            holder.siteLocation.setText(site.getLocation() != null ? site.getLocation() : "Unknown Location");
-        } else {
-            Log.e("Adapter", "Site data is null at position: " + position);
-        }
+        BloodDonationSite site = filteredSites.get(position);
+        holder.name.setText(site.getName());
+        holder.location.setText(site.getLocation());
     }
-
 
     @Override
     public int getItemCount() {
-        return sites.size();
+        return filteredSites.size();
+    }
+
+    // Method to filter by first letter
+    public void filterByFirstLetter(String letter) {
+        filteredSites = searchEngineService.searchDonationSites(sites,letter);
+        notifyDataSetChanged(); // Notify RecyclerView about data change
+    }
+
+    // Method to update data in the adapter
+    public void updateData(List<BloodDonationSite> newSites) {
+        this.sites = new ArrayList<>(newSites);
+        this.filteredSites = new ArrayList<>(newSites); // Reset filtered list
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView bloodType, bloodUnits, siteName, siteLocation, siteStatus;
+        public TextView name, location;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            bloodType = itemView.findViewById(R.id.blood_type);
-            bloodUnits = itemView.findViewById(R.id.blood_units);
-            siteName = itemView.findViewById(R.id.site_name);
-            siteLocation = itemView.findViewById(R.id.site_location);
-            siteStatus = itemView.findViewById(R.id.site_status);
+            name = itemView.findViewById(R.id.site_name);
+            location = itemView.findViewById(R.id.site_location);
         }
     }
 }
+
+
+
 
