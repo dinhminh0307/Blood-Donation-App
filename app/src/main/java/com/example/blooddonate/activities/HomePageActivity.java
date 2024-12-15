@@ -19,7 +19,7 @@ public class HomePageActivity extends AppCompatActivity {
     ImageView findSiteButton;
     TextView siteMap;
 
-    ImageView campaginAdd;
+    ImageView campaginAdd, profile;
 
     User user;
     @Override
@@ -31,6 +31,7 @@ public class HomePageActivity extends AppCompatActivity {
         onFindSiteBtnClicked();
         onSiteMapClicked();
         onCampaignClicked();
+        onProfileClicked();
     }
 
     public void setUser() {
@@ -70,6 +71,21 @@ public class HomePageActivity extends AppCompatActivity {
                 Intent intent = new Intent(HomePageActivity.this, AddSiteActivity.class);
                 intent.putExtra("user", user);
                 startActivity(intent);
+            }
+        });
+    }
+
+
+    private void onProfileClicked() {
+        profile = findViewById(R.id.nav_profile);
+
+        profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomePageActivity.this, ProfileActivity.class);
+                intent.putExtra("user", user);
+                startActivity(intent);
+                finish();
             }
         });
     }

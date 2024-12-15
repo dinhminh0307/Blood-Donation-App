@@ -17,4 +17,8 @@ public class UserController {
     public String getUserId() {
         return userService.getUserUID();
     }
+
+    public void signOut() {
+        userService.signOut();
+    }
 }

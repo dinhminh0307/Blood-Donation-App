@@ -115,4 +115,8 @@ public class FirebaseHelper {
                     callback.onFailure(e);
                 });
     }
+
+    public void signOut() {
+        mAuth.signOut();
+    }
 }

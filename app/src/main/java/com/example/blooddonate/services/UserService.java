@@ -18,4 +18,8 @@ public class UserService {
     public String getUserUID() {
         return firebaseHelper.getUserId();
     }
+
+    public void signOut() {
+        firebaseHelper.signOut();
+    }
 }

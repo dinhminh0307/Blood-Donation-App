@@ -1,5 +1,6 @@
 package com.example.blooddonate.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.blooddonate.MainActivity;
 import com.example.blooddonate.R;
 import com.example.blooddonate.callbacks.SignUpResultCallback;
 import com.example.blooddonate.controllers.SignupController;
@@ -78,15 +80,22 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onSignupSuccess(FirebaseUser user) {
                         Toast.makeText(RegisterActivity.this, "Register successfully " + user.getEmail(), Toast.LENGTH_SHORT).show();
-//                        checkUser = user;
+
+                        // Navigate to MainActivity and clear all other activities
+                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        Log.d("RegisterActivity", "Navigating to MainActivity and finishing activity");
+                        finish();
                     }
+
 
                     @Override
                     public void onSignupFailure(Exception exception) {
                         Toast.makeText(RegisterActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-                finish();
+//                finish();
             }
         });
     }
