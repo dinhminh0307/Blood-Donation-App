@@ -20,6 +20,8 @@ public class FirebaseHelper {
 
     private static final String TAG = "Firebase Helper";
 
+    private static String userId = "";
+
     public FirebaseHelper() {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -62,10 +64,14 @@ public class FirebaseHelper {
                 });
     }
 
+    public String getUserId() {
+        return this.userId;
+    }
+
     public void getCurrentUser(GetUserCallback callback) {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            String userId = currentUser.getUid();
+            userId = currentUser.getUid();
             db.collection("users").document(userId).get()
                     .addOnSuccessListener(document -> {
                         if (document.exists()) {
@@ -87,5 +93,26 @@ public class FirebaseHelper {
         } else {
             callback.onFailure(new Exception("No authenticated user found."));
         }
+    }
+
+    public void getUserByUID(String uid, GetUserCallback callback) {
+        db.collection("users").document(uid).get()
+                .addOnSuccessListener(document -> {
+                    if (document.exists()) {
+                        User user = document.toObject(User.class);
+                        if (user != null) {
+                            Log.d(TAG, "User retrieved by UID: " + user.getName());
+                            callback.onSuccess(user);
+                        } else {
+                            callback.onFailure(new Exception("Failed to parse User object."));
+                        }
+                    } else {
+                        callback.onFailure(new Exception("User document does not exist for UID: " + uid));
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error retrieving user document by UID", e);
+                    callback.onFailure(e);
+                });
     }
 }

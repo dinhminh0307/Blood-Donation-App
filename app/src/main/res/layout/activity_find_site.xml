@@ -106,12 +106,12 @@
 
         <!-- Received Requests Tab -->
         <TextView
-            android:id="@+id/tab_received_requests"
+            android:id="@+id/tab_my_sites"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Other sites"
+            android:text="My sites"
             android:textColor="#9E9E9E"
             android:textSize="14sp"
             android:background="#FFFFFF"
@@ -119,12 +119,12 @@
 
         <!-- My Requests Tab -->
         <TextView
-            android:id="@+id/tab_my_requests"
+            android:id="@+id/tab_other_sites"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="My Site(5)"
+            android:text="Other sites"
             android:textColor="#F44336"
             android:textSize="14sp"
             android:background="#F8F8F8"

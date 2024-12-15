@@ -1,5 +1,6 @@
 package com.example.blooddonate.models;
 
+import java.util.List;
 import java.util.Map;
 
 public class BloodDonationSite {
@@ -11,20 +12,21 @@ public class BloodDonationSite {
 
     private String bloodTypes; // Blood types and counts
     private double units; // Total blood units collected
-    private int registeredCount; // Number of registered donors or attendees
+
+    private List<String> registers;
 
     // Default constructor (required for Firestore)
     public BloodDonationSite() {
     }
 
     // Constructor with parameters
-    public BloodDonationSite(String name, String location, String date, String bloodTypes, double units, int registeredCount) {
+    public BloodDonationSite(String name, String location, String date, String bloodTypes, double units, String owner) {
         this.name = name;
         this.location = location;
         this.date = date;
         this.bloodTypes = bloodTypes;
         this.units = units;
-        this.registeredCount = registeredCount;
+        this.owner = owner;
     }
 
     // Getters and setters
@@ -60,6 +62,14 @@ public class BloodDonationSite {
         this.date = date;
     }
 
+    public void setRegisters(List<String> registers) {
+        this.registers = registers;
+    }
+
+    public List<String> getRegisters() {
+        return  this.registers;
+    }
+
     public String getBloodTypes() {
         return bloodTypes;
     }
@@ -76,18 +86,10 @@ public class BloodDonationSite {
         this.units = units;
     }
 
-    public int getRegisteredCount() {
-        return registeredCount;
-    }
-
-    public void setRegisteredCount(int registeredCount) {
-        this.registeredCount = registeredCount;
-    }
-
     public void setBloodDonationSite(BloodDonationSite site) {
         this.bloodTypes = site.getBloodTypes();
         this.date = site.getDate();
-        this.registeredCount = site.getRegisteredCount();
+        this.owner = site.getOwner();
         this.units = site.getUnits();
         this.location = site.getLocation();
         this.name = site.getName();

@@ -19,13 +19,17 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.blooddonate.R;
 import com.example.blooddonate.controllers.DonationSitesController;
+import com.example.blooddonate.controllers.UserController;
 import com.example.blooddonate.models.BloodDonationSite;
+import com.example.blooddonate.models.User;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class AddSiteActivity extends AppCompatActivity {
     DonationSitesController donationSitesController;
+
+    UserController userController;
 
     EditText siteName;
     EditText unitInput, locationInput;
@@ -39,12 +43,16 @@ public class AddSiteActivity extends AppCompatActivity {
 
     ImageView mapIcon;
 
+    User user;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_add_site);
+        user = (User) getIntent().getSerializableExtra("user");
+        userController = new UserController();
         donationSitesController = new DonationSitesController();
         setUpSpinner();
         onMapSelection();
@@ -107,7 +115,7 @@ public class AddSiteActivity extends AppCompatActivity {
                 int unit = Integer.parseInt(unitInput.getText().toString());
                 String selectedBloodGroup = bloodGroupSpinner.getSelectedItem().toString();
 
-                BloodDonationSite site = new BloodDonationSite(name, location, date, selectedBloodGroup, unit, 0);
+                BloodDonationSite site = new BloodDonationSite(name, location, date, selectedBloodGroup, unit, userController.getUserId());
                 donationSitesController.addSites(site);
                 finish();
             }

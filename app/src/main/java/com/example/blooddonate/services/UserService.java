@@ -14,4 +14,8 @@ public class UserService {
     public void getCurrentUser(GetUserCallback callback) {
         firebaseHelper.getCurrentUser(callback);
     }
+
+    public String getUserUID() {
+        return firebaseHelper.getUserId();
+    }
 }

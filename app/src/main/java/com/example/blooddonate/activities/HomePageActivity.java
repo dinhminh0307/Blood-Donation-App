@@ -13,20 +13,28 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.blooddonate.R;
+import com.example.blooddonate.models.User;
 
 public class HomePageActivity extends AppCompatActivity {
     ImageView findSiteButton;
     TextView siteMap;
 
     ImageView campaginAdd;
+
+    User user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home_page);
+        setUser();
         onFindSiteBtnClicked();
         onSiteMapClicked();
         onCampaignClicked();
+    }
+
+    public void setUser() {
+        user = (User) getIntent().getSerializableExtra("user");
     }
 
     private void onFindSiteBtnClicked() {
@@ -35,6 +43,7 @@ public class HomePageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomePageActivity.this, FindSiteActivity.class);
+                intent.putExtra("user", user);
                 startActivity(intent);
             }
         });
@@ -46,6 +55,8 @@ public class HomePageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomePageActivity.this, MapsActivity.class);
+                intent.putExtra("user", user);
+
                 startActivity(intent);
             }
         });
@@ -57,6 +68,7 @@ public class HomePageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomePageActivity.this, AddSiteActivity.class);
+                intent.putExtra("user", user);
                 startActivity(intent);
             }
         });

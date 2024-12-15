@@ -13,4 +13,8 @@ public class UserController {
     public void getCurrentUser(GetUserCallback callback) {
         this.userService.getCurrentUser(callback);
     }
+
+    public String getUserId() {
+        return userService.getUserUID();
+    }
 }
