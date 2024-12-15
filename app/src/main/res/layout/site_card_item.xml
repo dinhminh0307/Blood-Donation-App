@@ -105,7 +105,7 @@
                 android:layout_height="50dp"
                 android:layout_weight="1"
                 android:backgroundTint="#F44336"
-                android:text="Donor Info"
+                android:text="Request Site"
                 android:textColor="#FFFFFF" />
         </LinearLayout>
     </LinearLayout>

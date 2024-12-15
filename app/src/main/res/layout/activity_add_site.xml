@@ -163,54 +163,38 @@
 
 
 
-            <!-- Time -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Time"
-                android:textColor="#000000"
-                android:textSize="14sp"
-                android:layout_marginBottom="4dp" />
-
-            <RadioGroup
-                android:id="@+id/time_radio_group"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
-
-                <RadioButton
-                    android:id="@+id/radio_am"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="AM"
-                    android:textColor="#000000" />
-
-                <RadioButton
-                    android:id="@+id/radio_pm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="PM"
-                    android:layout_marginStart="16dp"
-                    android:textColor="#000000" />
-            </RadioGroup>
-
-            <!-- Gender -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Gender"
-                android:textColor="#000000"
-                android:textSize="14sp"
-                android:layout_marginBottom="4dp" />
-
-            <Spinner
-                android:id="@+id/gender_spinner"
+            <!-- Location -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@drawable/spinner_background"
-                android:padding="12dp"
-                android:layout_marginBottom="16dp" />
+                android:orientation="horizontal"
+                android:background="@drawable/edit_text_background"
+                android:layout_marginBottom="16dp"
+                android:gravity="center_vertical">
+
+                <!-- Location EditText -->
+                <EditText
+                    android:id="@+id/location_input"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="Enter location or click map"
+                    android:padding="12dp"
+                    android:background="@android:color/transparent"
+                    android:textColor="#000000"
+                    android:textSize="14sp" />
+
+                <!-- Map Icon -->
+                <ImageView
+                    android:id="@+id/map_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_map"
+                android:padding="8dp"
+                android:contentDescription="Map Icon" />
+            </LinearLayout>
+
+
         </LinearLayout>
     </ScrollView>
 
