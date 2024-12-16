@@ -23,12 +23,16 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
     private List<BloodDonationSite> filteredSites; // Filtered list for display
     private Context context;
 
+    private String currentUserId; // Holds the current user's UID
+
+
     private SearchEngineService searchEngineService;
 
-    public BloodDonationSiteAdapter(Context context, List<BloodDonationSite> sites) {
+    public BloodDonationSiteAdapter(Context context, List<BloodDonationSite> sites, String currentUserId) {
         this.context = context;
         this.sites = sites;
         this.filteredSites = new ArrayList<>(sites); // Initialize filtered list
+        this.currentUserId = currentUserId;
         searchEngineService = new SearchEngineService();
     }
 
@@ -58,30 +62,43 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
         return filteredSites.size();
     }
 
-    // Method to filter by first letter
-    public void filterByFirstLetter(String letter) {
-        filteredSites = searchEngineService.searchDonationSites(sites,letter);
+    // Method to filter out sites owned by the current user
+    public void updateData(List<BloodDonationSite> newSites) {
+        this.sites = new ArrayList<>(newSites);
+
+        // Filter out sites where the owner matches the current user
+        this.filteredSites = new ArrayList<>();
+        for (BloodDonationSite site : sites) {
+            if (!site.getOwner().equals(currentUserId)) {
+                this.filteredSites.add(site);
+            }
+        }
+
         notifyDataSetChanged(); // Notify RecyclerView about data change
     }
 
-    // Method to update data in the adapter
-    public void updateData(List<BloodDonationSite> newSites) {
-        this.sites = new ArrayList<>(newSites);
-        this.filteredSites = new ArrayList<>(newSites); // Reset filtered list
+    // Filter method (e.g., by first letter)
+    public void filterByFirstLetter(String letter) {
+        List<BloodDonationSite> tempFiltered = new ArrayList<>();
+        for (BloodDonationSite site : sites) {
+            if (!site.getOwner().equals(currentUserId) &&
+                    site.getName().toLowerCase().startsWith(letter.toLowerCase())) {
+                tempFiltered.add(site);
+            }
+        }
+        filteredSites = tempFiltered;
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView name, location;
         public Button requestSiteButton;
+
         public ViewHolder(View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.site_name);
             location = itemView.findViewById(R.id.site_location);
-            requestSiteButton = itemView.findViewById(R.id.site_request_button); // Add this line
+            requestSiteButton = itemView.findViewById(R.id.site_request_button);
         }
     }
 }
-
-
-
-

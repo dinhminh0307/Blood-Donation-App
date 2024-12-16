@@ -5,10 +5,16 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User implements Parcelable {
     private String name;
     private String phoneNumber;
     private String email;
+
+    private List<String> listRegistered = new ArrayList<>();
+    private List<String> listOwnSites = new ArrayList<>();
 
     // Default constructor (required for Firestore)
     public User() {}
@@ -18,6 +24,15 @@ public class User implements Parcelable {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.email = email;
+    }
+
+    // Constructor with listRegistered and listOwnSites
+    public User(String name, String phoneNumber, String email, List<String> listRegistered, List<String> listOwnSites) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.listRegistered = listRegistered;
+        this.listOwnSites = listOwnSites;
     }
 
     // Getters and setters
@@ -45,17 +60,46 @@ public class User implements Parcelable {
         this.email = email;
     }
 
+    public List<String> getListRegistered() {
+        return listRegistered;
+    }
+
+    public void setListRegistered(List<String> listRegistered) {
+        this.listRegistered = listRegistered;
+    }
+
+    public List<String> getListOwnSites() {
+        return listOwnSites;
+    }
+
+    public void setListOwnSites(List<String> listOwnSites) {
+        this.listOwnSites = listOwnSites;
+    }
+
     public void setUser(User currentUser) {
         this.email = currentUser.getEmail();
         this.phoneNumber = currentUser.getPhoneNumber();
         this.name = currentUser.getName();
+        this.listRegistered = currentUser.getListRegistered();
+        this.listOwnSites = currentUser.getListOwnSites();
     }
 
     // Parcelable implementation
     protected User(Parcel in) {
         name = in.readString();
-        email = in.readString();
         phoneNumber = in.readString();
+        email = in.readString();
+        listRegistered = in.createStringArrayList();
+        listOwnSites = in.createStringArrayList();
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(phoneNumber);
+        dest.writeString(email);
+        dest.writeStringList(listRegistered);
+        dest.writeStringList(listOwnSites);
     }
 
     @Override
@@ -63,14 +107,7 @@ public class User implements Parcelable {
         return 0;
     }
 
-    @Override
-    public void writeToParcel(@NonNull Parcel dest, int flags) {
-        dest.writeString(name);
-        dest.writeString(email);
-        dest.writeString(phoneNumber);
-    }
-
-    public static final Parcelable.Creator<User> CREATOR = new Creator<User>() {
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
         @Override
         public User createFromParcel(Parcel in) {
             return new User(in);

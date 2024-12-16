@@ -57,6 +57,7 @@ public class SiteCardAdapter extends RecyclerView.Adapter<SiteCardAdapter.ViewHo
             Intent intent = new Intent(context, RequestActivity.class);
             intent.putExtra("site_name", site.getName());
             intent.putExtra("site_location", site.getLocation());
+            intent.putExtra("site_data", site);
             context.startActivity(intent);
         });
     }

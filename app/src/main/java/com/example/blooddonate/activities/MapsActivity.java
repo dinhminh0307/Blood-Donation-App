@@ -17,6 +17,7 @@ import com.example.blooddonate.R;
 import com.example.blooddonate.adapters.SiteCardAdapter;
 import com.example.blooddonate.callbacks.DataFetchCallback;
 import com.example.blooddonate.controllers.DonationSitesController;
+import com.example.blooddonate.controllers.UserController;
 import com.example.blooddonate.models.BloodDonationSite;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -45,13 +46,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private Button confirmButton;
 
+    private UserController userController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
         isInteractive = getIntent().getBooleanExtra("isInteractive", false);
-
+        userController = new UserController();
         // RecyclerView Setup
         recyclerView = findViewById(R.id.site_list_recycler);
         if (!isInteractive) {
@@ -115,7 +118,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onSuccess(List<BloodDonationSite> data) {
                 sites.clear();
-                sites.addAll(data);
+                for(BloodDonationSite tmp : data) {
+                    if(!tmp.getOwner().equals(userController.getUserId())) {
+                        sites.add(tmp);
+                    }
+                }
+
                 adapter.notifyDataSetChanged();
                 addMarkersToMap();
             }

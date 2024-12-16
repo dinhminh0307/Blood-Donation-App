@@ -19,6 +19,7 @@ import com.example.blooddonate.R;
 import com.example.blooddonate.adapters.BloodDonationSiteAdapter;
 import com.example.blooddonate.callbacks.DataFetchCallback;
 import com.example.blooddonate.controllers.DonationSitesController;
+import com.example.blooddonate.controllers.UserController;
 import com.example.blooddonate.dialogs.FilterDialogFragment;
 import com.example.blooddonate.models.BloodDonationSite;
 
@@ -29,6 +30,8 @@ public class FindSiteActivity extends AppCompatActivity {
     RecyclerView siteRecycleView;
 
     DonationSitesController donationSitesController;
+
+    UserController userController;
 
     BloodDonationSiteAdapter adapter;
 
@@ -67,8 +70,9 @@ public class FindSiteActivity extends AppCompatActivity {
     }
 
     private void initAdapter() {
+        userController = new UserController();
         // Initialize the adapter with an empty list
-        adapter = new BloodDonationSiteAdapter(this, sites);
+        adapter = new BloodDonationSiteAdapter(this, sites, userController.getUserId());
         siteRecycleView.setLayoutManager(new LinearLayoutManager(this));
         siteRecycleView.setAdapter(adapter);
     }

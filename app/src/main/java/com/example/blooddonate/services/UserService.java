@@ -27,4 +27,8 @@ public class UserService {
     public void login(String email, String password, LoginCallback cb) {
         firebaseHelper.login(email,password,cb);
     }
+
+    public void updateUserField(String siteId, String fieldName, Object val) {
+        firebaseHelper.updateUserField(siteId, fieldName, val);
+    }
 }

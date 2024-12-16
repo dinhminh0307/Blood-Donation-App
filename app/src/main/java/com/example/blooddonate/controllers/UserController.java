@@ -23,6 +23,10 @@ public class UserController {
         userService.signOut();
     }
 
+    public void updateUserField(String siteId, String fieldName, Object val) {
+        userService.updateUserField(siteId, fieldName, val);
+    }
+
     public void login(String email, String password, LoginCallback cb) {
         userService.login(email, password, cb);
     }

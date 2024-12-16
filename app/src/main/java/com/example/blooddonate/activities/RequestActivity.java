@@ -168,6 +168,7 @@ public class RequestActivity extends AppCompatActivity {
                         // Once siteUID is retrieved, update Firestore
                         Log.d("Request Activity", "Site UID: " + siteUID);
                         donationSitesController.updateDonationSite(siteUID, "registers", FieldValue.arrayUnion(userController.getUserId()));
+                        userController.updateUserField(userController.getUserId(), "listRegistered", FieldValue.arrayUnion(siteUID));
                         Toast.makeText(RequestActivity.this, "All questions completed, you are qualified", Toast.LENGTH_SHORT).show();
                         finish();
                     }

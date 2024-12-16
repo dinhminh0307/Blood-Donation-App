@@ -48,7 +48,6 @@ public class DonationSiteService {
                 });
     }
 
-    // Example method to update an existing donation site
     public void updateField(String siteId, String fieldName, Object value) {
         firestore.collection("bloodDonationSites")
                 .document(siteId)

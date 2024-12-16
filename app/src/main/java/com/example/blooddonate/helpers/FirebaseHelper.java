@@ -137,6 +137,18 @@ public class FirebaseHelper {
                 });
     }
 
+    public void updateUserField(String siteId, String fieldName, Object value) {
+        db.collection("users")
+                .document(siteId)
+                .update(fieldName, value)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Firestore", "Field " + fieldName + " updated successfully for site: " + siteId);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error updating field " + fieldName + " for site: " + siteId, e);
+                });
+    }
+
     public void signOut() {
         mAuth.signOut();
     }
