@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.blooddonate.callbacks.GetUserCallback;
+import com.example.blooddonate.callbacks.LoginCallback;
 import com.example.blooddonate.callbacks.SignUpCallback;
 import com.example.blooddonate.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -58,6 +59,26 @@ public class FirebaseHelper {
                         } else {
                             // Sign up failed
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            callback.onFailure(task.getException());
+                        }
+                    }
+                });
+    }
+
+    public void login(String email, String password, LoginCallback callback) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            callback.onSuccess(user);
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
                             callback.onFailure(task.getException());
                         }
                     }

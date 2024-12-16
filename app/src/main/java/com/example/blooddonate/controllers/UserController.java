@@ -1,6 +1,7 @@
 package com.example.blooddonate.controllers;
 
 import com.example.blooddonate.callbacks.GetUserCallback;
+import com.example.blooddonate.callbacks.LoginCallback;
 import com.example.blooddonate.services.UserService;
 
 public class UserController {
@@ -20,5 +21,9 @@ public class UserController {
 
     public void signOut() {
         userService.signOut();
+    }
+
+    public void login(String email, String password, LoginCallback cb) {
+        userService.login(email, password, cb);
     }
 }

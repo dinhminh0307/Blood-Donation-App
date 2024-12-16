@@ -1,6 +1,7 @@
 package com.example.blooddonate.services;
 
 import com.example.blooddonate.callbacks.GetUserCallback;
+import com.example.blooddonate.callbacks.LoginCallback;
 import com.example.blooddonate.helpers.FirebaseHelper;
 import com.example.blooddonate.models.User;
 
@@ -21,5 +22,9 @@ public class UserService {
 
     public void signOut() {
         firebaseHelper.signOut();
+    }
+
+    public void login(String email, String password, LoginCallback cb) {
+        firebaseHelper.login(email,password,cb);
     }
 }

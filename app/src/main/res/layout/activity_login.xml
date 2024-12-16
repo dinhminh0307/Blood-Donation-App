@@ -25,10 +25,10 @@
 
         <!-- Email/Phone Input -->
         <EditText
-            android:id="@+id/email_phone_input"
+            android:id="@+id/email_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="E-mail/Phone Number"
+            android:hint="E-mail"
             android:inputType="textEmailAddress"
             android:padding="12dp"
             android:backgroundTint="#A9A9A9"
