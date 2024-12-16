@@ -1,18 +1,20 @@
 package com.example.blooddonate.models;
 
-import java.util.List;
-import java.util.Map;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class BloodDonationSite {
+import androidx.annotation.NonNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class BloodDonationSite implements Parcelable {
     private String name;
     private String location;
     private String date;
-
     private String owner;
-
     private String bloodTypes; // Blood types and counts
     private double units; // Total blood units collected
-
     private List<String> registers;
 
     // Default constructor (required for Firestore)
@@ -20,13 +22,14 @@ public class BloodDonationSite {
     }
 
     // Constructor with parameters
-    public BloodDonationSite(String name, String location, String date, String bloodTypes, double units, String owner) {
+    public BloodDonationSite(String name, String location, String date, String bloodTypes, double units, String owner, List<String> registers) {
         this.name = name;
         this.location = location;
         this.date = date;
         this.bloodTypes = bloodTypes;
         this.units = units;
         this.owner = owner;
+        this.registers = registers;
     }
 
     // Getters and setters
@@ -67,7 +70,7 @@ public class BloodDonationSite {
     }
 
     public List<String> getRegisters() {
-        return  this.registers;
+        return this.registers;
     }
 
     public String getBloodTypes() {
@@ -93,8 +96,45 @@ public class BloodDonationSite {
         this.units = site.getUnits();
         this.location = site.getLocation();
         this.name = site.getName();
+        this.registers = site.getRegisters();
     }
 
-    // Method to calculate the total number of blood units based on blood types
+    // Parcelable implementation
+    protected BloodDonationSite(Parcel in) {
+        name = in.readString();
+        location = in.readString();
+        date = in.readString();
+        owner = in.readString();
+        bloodTypes = in.readString();
+        units = in.readDouble();
+        registers = in.createStringArrayList();
+    }
 
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(location);
+        dest.writeString(date);
+        dest.writeString(owner);
+        dest.writeString(bloodTypes);
+        dest.writeDouble(units);
+        dest.writeStringList(registers);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<BloodDonationSite> CREATOR = new Parcelable.Creator<BloodDonationSite>() {
+        @Override
+        public BloodDonationSite createFromParcel(Parcel in) {
+            return new BloodDonationSite(in);
+        }
+
+        @Override
+        public BloodDonationSite[] newArray(int size) {
+            return new BloodDonationSite[size];
+        }
+    };
 }

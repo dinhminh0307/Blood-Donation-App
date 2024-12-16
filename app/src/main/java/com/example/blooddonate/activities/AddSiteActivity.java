@@ -23,7 +23,9 @@ import com.example.blooddonate.controllers.UserController;
 import com.example.blooddonate.models.BloodDonationSite;
 import com.example.blooddonate.models.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AddSiteActivity extends AppCompatActivity {
@@ -114,9 +116,10 @@ public class AddSiteActivity extends AppCompatActivity {
                 String date = dateInput.getText().toString();
                 int unit = Integer.parseInt(unitInput.getText().toString());
                 String selectedBloodGroup = bloodGroupSpinner.getSelectedItem().toString();
-
-                BloodDonationSite site = new BloodDonationSite(name, location, date, selectedBloodGroup, unit, userController.getUserId());
-                donationSitesController.addSites(site);
+                List<String> registers = new ArrayList<>();
+                String siteId = "S" + userController.getUserId();
+                BloodDonationSite site = new BloodDonationSite(name, location, date, selectedBloodGroup, unit, userController.getUserId(), registers);
+                donationSitesController.addSites(siteId, site);
                 finish();
             }
         });

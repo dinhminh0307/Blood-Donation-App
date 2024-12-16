@@ -49,17 +49,18 @@ public class DonationSiteService {
     }
 
     // Example method to update an existing donation site
-    public void updateDonationSite(String siteId, Map<String, Object> updates) {
+    public void updateField(String siteId, String fieldName, Object value) {
         firestore.collection("bloodDonationSites")
                 .document(siteId)
-                .update(updates)
+                .update(fieldName, value)
                 .addOnSuccessListener(aVoid -> {
-                    Log.d("Firestore", "Donation site updated successfully: " + siteId);
+                    Log.d("Firestore", "Field " + fieldName + " updated successfully for site: " + siteId);
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("Firestore", "Error updating donation site", e);
+                    Log.e("Firestore", "Error updating field " + fieldName + " for site: " + siteId, e);
                 });
     }
+
 
     // Example method to delete a donation site
     public void deleteDonationSite(String siteId) {
@@ -111,5 +112,31 @@ public class DonationSiteService {
                     callback.onFailure(e);
                 });
     }
+
+    public void getSiteIdByModel(BloodDonationSite siteModel, DataFetchCallback<String> callback) {
+        firestore.collection("bloodDonationSites")
+                .whereEqualTo("name", siteModel.getName()) // Match site name
+                .whereEqualTo("location", siteModel.getLocation()) // Match site location
+                .whereEqualTo("date", siteModel.getDate()) // Match site date
+                .whereEqualTo("bloodTypes", siteModel.getBloodTypes()) // Match blood types
+                .whereEqualTo("units", siteModel.getUnits()) // Match units
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        // Get the first matching document
+                        String siteId = querySnapshot.getDocuments().get(0).getId();
+                        List<String> returnedData = new ArrayList<>();
+                        returnedData.add(siteId);
+                        callback.onSuccess(returnedData);
+                    } else {
+                        callback.onFailure(new Exception("No matching site found."));
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error finding site UID", e);
+                    callback.onFailure(e);
+                });
+    }
+
 
 }

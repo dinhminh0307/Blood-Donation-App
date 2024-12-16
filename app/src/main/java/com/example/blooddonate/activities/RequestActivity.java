@@ -15,8 +15,12 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.blooddonate.R;
 import com.example.blooddonate.callbacks.DataFetchCallback;
+import com.example.blooddonate.controllers.DonationSitesController;
 import com.example.blooddonate.controllers.RequestFormController;
+import com.example.blooddonate.controllers.UserController;
+import com.example.blooddonate.models.BloodDonationSite;
 import com.example.blooddonate.models.RequestQuestionForm;
+import com.google.firebase.firestore.FieldValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +32,17 @@ public class RequestActivity extends AppCompatActivity {
 
     RequestFormController requestFormController;
 
+    DonationSitesController donationSitesController;
+
+    UserController userController;
+
     private int currentQuestionIndex = 0;
 
     private boolean isValidated = true;
+
+    private BloodDonationSite site;
+
+    String siteUID;
 
     private List<RequestQuestionForm> questionList = new ArrayList<>();
     @Override
@@ -44,6 +56,27 @@ public class RequestActivity extends AppCompatActivity {
 
     }
 
+    private void setSiteUID(DataFetchCallback<String> callback) {
+        donationSitesController.getSiteUiD(site, new DataFetchCallback<String>() {
+            @Override
+            public void onSuccess(List<String> data) {
+                if (!data.isEmpty()) {
+                    siteUID = data.get(0);
+                    callback.onSuccess(data); // Pass the siteUID back through the callback
+                } else {
+                    callback.onFailure(new Exception("Site UID not found."));
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("RequestActivity", "Failed to fetch Site UID", e);
+                callback.onFailure(e);
+            }
+        });
+    }
+
+
     private void componentsInit() {
         questionText = findViewById(R.id.question_text);
         pageIndicator = findViewById(R.id.page_indicator);
@@ -51,7 +84,12 @@ public class RequestActivity extends AppCompatActivity {
         noButton = findViewById(R.id.No_button);
         skipText = findViewById(R.id.skip_text);
 
+        site = getIntent().getParcelableExtra("site_data");
+
         requestFormController = new RequestFormController();
+        donationSitesController = new DonationSitesController();
+        userController = new UserController();
+
         getQuestionList();
 
     }
@@ -122,13 +160,29 @@ public class RequestActivity extends AppCompatActivity {
         if (currentQuestionIndex < questionList.size()) {
             displayQuestion();
         } else {
-            if(isValidated) {
-                Toast.makeText(this, "All questions completed, you are qualifeid", Toast.LENGTH_SHORT).show();
+            if (isValidated) {
+                // Retrieve Site UID before updating Firestore
+                setSiteUID(new DataFetchCallback<String>() {
+                    @Override
+                    public void onSuccess(List<String> data) {
+                        // Once siteUID is retrieved, update Firestore
+                        Log.d("Request Activity", "Site UID: " + siteUID);
+                        donationSitesController.updateDonationSite(siteUID, "registers", FieldValue.arrayUnion(userController.getUserId()));
+                        Toast.makeText(RequestActivity.this, "All questions completed, you are qualified", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(RequestActivity.this, "Failed to retrieve Site UID.", Toast.LENGTH_SHORT).show();
+                        Log.e("Request Activity", "Failed to retrieve Site UID.", e);
+                    }
+                });
             } else {
                 Toast.makeText(this, "You are not qualified", Toast.LENGTH_SHORT).show();
+                finish(); // End activity
             }
-
-            finish(); // End activity or navigate to another screen
         }
     }
+
 }
