@@ -36,9 +36,10 @@ public class RequestFormService {
                 });
     }
 
-    public boolean verifiedUser(List<RequestQuestionForm> ques) {
+    public static boolean verifiedUser(List<RequestQuestionForm> ques) {
         for(RequestQuestionForm validate : ques) {
             if(!validate.isQualified()) {
+                validate.setQualified(true);
                 return false;
             }
         }

@@ -30,6 +30,8 @@ public class RequestActivity extends AppCompatActivity {
 
     private int currentQuestionIndex = 0;
 
+    private boolean isValidated = true;
+
     private List<RequestQuestionForm> questionList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,17 +99,12 @@ public class RequestActivity extends AppCompatActivity {
         yesButton.setOnClickListener(v -> {
 
             //update in question list
-            currentQuestion.setQualified(true);
-            questionList.remove(currentQuestion);
-            questionList.add(currentQuestion);
             loadNextQuestion();
         });
 
         // Handle No button click
         noButton.setOnClickListener(v -> {
-            currentQuestion.setQualified(false);
-            questionList.remove(currentQuestion);
-            questionList.add(currentQuestion);
+            isValidated = false;
             loadNextQuestion();
         });
 
@@ -125,7 +122,7 @@ public class RequestActivity extends AppCompatActivity {
         if (currentQuestionIndex < questionList.size()) {
             displayQuestion();
         } else {
-            if(requestFormController.verifiedUser(questionList)) {
+            if(isValidated) {
                 Toast.makeText(this, "All questions completed, you are qualifeid", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "You are not qualified", Toast.LENGTH_SHORT).show();
