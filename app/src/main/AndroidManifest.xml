@@ -19,6 +19,9 @@
         android:theme="@style/Theme.BloodDonate"
         tools:targetApi="31">
         <activity
+            android:name=".activities.RequestActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.ProfileActivity"
             android:exported="false" />
         <activity

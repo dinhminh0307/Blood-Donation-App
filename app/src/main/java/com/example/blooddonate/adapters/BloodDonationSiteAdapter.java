@@ -1,14 +1,17 @@
 package com.example.blooddonate.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.blooddonate.R;
+import com.example.blooddonate.activities.RequestActivity;
 import com.example.blooddonate.models.BloodDonationSite;
 import com.example.blooddonate.services.SearchEngineService;
 
@@ -40,6 +43,13 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
         BloodDonationSite site = filteredSites.get(position);
         holder.name.setText(site.getName());
         holder.location.setText(site.getLocation());
+
+        holder.requestSiteButton.setOnClickListener(v -> {
+            Intent intent = new Intent(context, RequestActivity.class);
+            intent.putExtra("site_name", site.getName());
+            intent.putExtra("site_location", site.getLocation());
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -61,11 +71,12 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView name, location;
-
+        public Button requestSiteButton;
         public ViewHolder(View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.site_name);
             location = itemView.findViewById(R.id.site_location);
+            requestSiteButton = itemView.findViewById(R.id.site_request_button); // Add this line
         }
     }
 }
