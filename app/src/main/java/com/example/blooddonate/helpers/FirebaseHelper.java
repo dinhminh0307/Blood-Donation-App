@@ -4,16 +4,22 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.blooddonate.callbacks.DataFetchCallback;
 import com.example.blooddonate.callbacks.GetUserCallback;
 import com.example.blooddonate.callbacks.LoginCallback;
 import com.example.blooddonate.callbacks.SignUpCallback;
+import com.example.blooddonate.models.BloodDonationSite;
 import com.example.blooddonate.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FirebaseHelper {
     private FirebaseAuth mAuth;
@@ -146,6 +152,26 @@ public class FirebaseHelper {
                 })
                 .addOnFailureListener(e -> {
                     Log.e("Firestore", "Error updating field " + fieldName + " for site: " + siteId, e);
+                });
+    }
+
+    public void findAllUser(DataFetchCallback<User> callback) {
+        db.collection("users")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<User> users = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        User user = doc.toObject(User.class);
+                        if (user != null) {
+                            users.add(user);
+                        }
+                    }
+                    // Notify success with the fetched data
+                    callback.onSuccess(users);
+                })
+                .addOnFailureListener(e -> {
+                    // Notify failure
+                    callback.onFailure(e);
                 });
     }
 

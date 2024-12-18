@@ -160,7 +160,7 @@ public class FindSiteActivity extends AppCompatActivity {
                 mySites.add(site);
             }
         }
-        adapter.updateData(mySites);
+        adapter.updateData(mySites, true);
     }
 
     private void showOtherSites() {
@@ -178,7 +178,7 @@ public class FindSiteActivity extends AppCompatActivity {
                 otherSites.add(site);
             }
         }
-        adapter.updateData(otherSites);
+        adapter.updateData(otherSites, false);
     }
 
 }

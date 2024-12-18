@@ -1,5 +1,6 @@
 package com.example.blooddonate.services;
 
+import com.example.blooddonate.callbacks.DataFetchCallback;
 import com.example.blooddonate.callbacks.GetUserCallback;
 import com.example.blooddonate.callbacks.LoginCallback;
 import com.example.blooddonate.helpers.FirebaseHelper;
@@ -30,5 +31,13 @@ public class UserService {
 
     public void updateUserField(String siteId, String fieldName, Object val) {
         firebaseHelper.updateUserField(siteId, fieldName, val);
+    }
+
+    public void getUserByUID(String id, GetUserCallback cb) {
+        firebaseHelper.getUserByUID(id, cb);
+    }
+
+    public void getAllUsers(DataFetchCallback<User> cb) {
+        firebaseHelper.findAllUser(cb);
     }
 }

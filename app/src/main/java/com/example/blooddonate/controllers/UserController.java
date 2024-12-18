@@ -1,7 +1,9 @@
 package com.example.blooddonate.controllers;
 
+import com.example.blooddonate.callbacks.DataFetchCallback;
 import com.example.blooddonate.callbacks.GetUserCallback;
 import com.example.blooddonate.callbacks.LoginCallback;
+import com.example.blooddonate.models.User;
 import com.example.blooddonate.services.UserService;
 
 public class UserController {
@@ -29,5 +31,13 @@ public class UserController {
 
     public void login(String email, String password, LoginCallback cb) {
         userService.login(email, password, cb);
+    }
+
+    public void getUserByUID(String id, GetUserCallback cb) {
+        userService.getUserByUID(id, cb);
+    }
+
+    public void getAllUsers(DataFetchCallback<User> cb) {
+        userService.getAllUsers(cb);
     }
 }
