@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,6 +44,10 @@ public class FindSiteActivity extends AppCompatActivity {
 
     List<BloodDonationSite> sites;
 
+    TextView tabMySites, tabOtherSites;
+
+    String currentUserId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,12 +56,17 @@ public class FindSiteActivity extends AppCompatActivity {
 
         // Initialize data and UI
         donationSitesController = new DonationSitesController();
+        userController = new UserController();
+        currentUserId = userController.getUserId();
         sites = new ArrayList<>();
 
         siteRecycleView = findViewById(R.id.recycler_view);
         searchButton = findViewById(R.id.search_button);
         searchEditText = findViewById(R.id.search_edit_text);
         filter = findViewById(R.id.filter_icon);
+
+        tabMySites = findViewById(R.id.tab_my_sites);
+        tabOtherSites = findViewById(R.id.tab_other_sites);
 
         // Initialize adapter
         initAdapter();
@@ -67,12 +77,12 @@ public class FindSiteActivity extends AppCompatActivity {
         // Set up filter and search logic
         onFilterClicked();
         onSearchInputChanged();
+        onTabClicked(); // Handle tab clicks
     }
 
     private void initAdapter() {
-        userController = new UserController();
         // Initialize the adapter with an empty list
-        adapter = new BloodDonationSiteAdapter(this, sites, userController.getUserId());
+        adapter = new BloodDonationSiteAdapter(this, sites, currentUserId);
         siteRecycleView.setLayoutManager(new LinearLayoutManager(this));
         siteRecycleView.setAdapter(adapter);
     }
@@ -85,13 +95,10 @@ public class FindSiteActivity extends AppCompatActivity {
                 sites.clear();
                 sites.addAll(data);
 
-                // Update the adapter's filteredSites list to show all data
-                adapter.updateData(sites);
+                // Initially show "Other Sites"
+                showOtherSites();
 
                 Log.d("Firestore", "Fetched sites: " + sites.size());
-
-                // Notify the adapter to refresh the RecyclerView
-                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -132,5 +139,48 @@ public class FindSiteActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void onTabClicked() {
+        tabMySites.setOnClickListener(v -> showMySites());
+        tabOtherSites.setOnClickListener(v -> showOtherSites());
+    }
+
+    private void showMySites() {
+        // Update tab UI
+        tabMySites.setTextColor(getResources().getColor(android.R.color.black)); // Selected tab color
+        tabOtherSites.setTextColor(getResources().getColor(android.R.color.darker_gray)); // Unselected tab color
+
+        tabMySites.setBackgroundColor(getResources().getColor(android.R.color.white)); // Selected tab background
+        tabOtherSites.setBackgroundColor(getResources().getColor(android.R.color.transparent)); // Unselected tab background
+
+        // Filter sites owned by the current user
+        List<BloodDonationSite> mySites = new ArrayList<>();
+        for (BloodDonationSite site : sites) {
+            if (site.getOwner().equals(currentUserId)) {
+                mySites.add(site);
+            }
+        }
+        adapter.updateData(mySites);
+    }
+
+    private void showOtherSites() {
+        // Update tab UI
+        tabMySites.setTextColor(getResources().getColor(android.R.color.darker_gray)); // Unselected tab color
+        tabOtherSites.setTextColor(getResources().getColor(android.R.color.black)); // Selected tab color
+
+        tabMySites.setBackgroundColor(getResources().getColor(android.R.color.transparent)); // Unselected tab background
+        tabOtherSites.setBackgroundColor(getResources().getColor(android.R.color.white)); // Selected tab background
+
+        // Filter sites not owned by the current user
+        List<BloodDonationSite> otherSites = new ArrayList<>();
+        for (BloodDonationSite site : sites) {
+            if (!site.getOwner().equals(currentUserId)) {
+                otherSites.add(site);
+            }
+        }
+        adapter.updateData(otherSites);
+    }
+
 }
+
 

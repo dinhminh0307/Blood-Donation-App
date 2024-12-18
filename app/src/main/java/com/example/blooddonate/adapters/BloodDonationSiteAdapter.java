@@ -69,9 +69,7 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
         // Filter out sites where the owner matches the current user
         this.filteredSites = new ArrayList<>();
         for (BloodDonationSite site : sites) {
-            if (!site.getOwner().equals(currentUserId)) {
-                this.filteredSites.add(site);
-            }
+            this.filteredSites.add(site);
         }
 
         notifyDataSetChanged(); // Notify RecyclerView about data change
