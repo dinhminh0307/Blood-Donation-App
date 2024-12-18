@@ -28,6 +28,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private User user;
 
+    private ImageView homeNav, profileNav;
 
 
     @Override
@@ -43,6 +44,7 @@ public class ProfileActivity extends AppCompatActivity {
         profileInfoSetUp();
         // Set click listener for the menu icon
         menuIcon.setOnClickListener(this::showPopupMenu);
+        onNavClicked();
     }
 
     private void profileInfoSetUp() {
@@ -98,6 +100,22 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             return false;
         }
+    }
+
+    private  void onNavClicked() {
+        homeNav = findViewById(R.id.home_nav);
+        profileNav = findViewById(R.id.profile_nav);
+
+        homeNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, HomePageActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
+        });
+
+
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.blooddonate.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,10 +20,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.blooddonate.R;
 import com.example.blooddonate.adapters.BloodDonationSiteAdapter;
 import com.example.blooddonate.callbacks.DataFetchCallback;
+import com.example.blooddonate.callbacks.GetUserCallback;
 import com.example.blooddonate.controllers.DonationSitesController;
 import com.example.blooddonate.controllers.UserController;
 import com.example.blooddonate.dialogs.FilterDialogFragment;
 import com.example.blooddonate.models.BloodDonationSite;
+import com.example.blooddonate.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +41,7 @@ public class FindSiteActivity extends AppCompatActivity {
 
     Button searchButton;
 
-    ImageView filter;
+    ImageView filter, homeNav, profileNav;
 
     EditText searchEditText;
 
@@ -78,6 +81,7 @@ public class FindSiteActivity extends AppCompatActivity {
         onFilterClicked();
         onSearchInputChanged();
         onTabClicked(); // Handle tab clicks
+        onNavClicked();
     }
 
     private void initAdapter() {
@@ -179,6 +183,41 @@ public class FindSiteActivity extends AppCompatActivity {
             }
         }
         adapter.updateData(otherSites, false);
+    }
+
+    private  void onNavClicked() {
+        homeNav = findViewById(R.id.home_nav);
+        profileNav = findViewById(R.id.profile_nav);
+
+        homeNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(FindSiteActivity.this, HomePageActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
+        });
+
+        profileNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                userController.getUserByUID(currentUserId, new GetUserCallback() {
+                    @Override
+                    public void onSuccess(User user) {
+                        Intent intent = new Intent(FindSiteActivity.this, ProfileActivity.class);
+                        intent.putExtra("user", user);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onFailure(Exception exception) {
+
+                    }
+                });
+            }
+        });
     }
 
 }
