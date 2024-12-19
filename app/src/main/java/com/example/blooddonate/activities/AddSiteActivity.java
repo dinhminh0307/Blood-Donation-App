@@ -1,10 +1,14 @@
 package com.example.blooddonate.activities;
 
 import android.content.Intent;
+
+import android.app.DatePickerDialog;
+import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
@@ -43,9 +47,11 @@ public class AddSiteActivity extends AppCompatActivity {
 
     Spinner bloodGroupSpinner;
 
-    ImageView mapIcon;
+    ImageView mapIcon, dateIcon;
 
     User user;
+
+    String pickedDate = "";
 
 
     @Override
@@ -56,9 +62,13 @@ public class AddSiteActivity extends AppCompatActivity {
         user = (User) getIntent().getSerializableExtra("user");
         userController = new UserController();
         donationSitesController = new DonationSitesController();
+
+        // init component
+        componentInit();
         setUpSpinner();
         onMapSelection();
         onAddSiteButtonClicked();
+        onDateIconClicked();
     }
 
     private void setUpSpinner() {
@@ -99,14 +109,17 @@ public class AddSiteActivity extends AppCompatActivity {
         }
     }
 
-
-    private void onAddSiteButtonClicked() {
+    private void componentInit() {
         siteName = findViewById(R.id.site_name_input);
         bloodGroupSpinner = findViewById(R.id.blood_group_spinner);
         addSiteBtn = findViewById(R.id.add_site_button);
         unitInput = findViewById(R.id.units_input);
         locationInput = findViewById(R.id.location_input);
         dateInput = findViewById(R.id.date_input);
+    }
+
+    private void onAddSiteButtonClicked() {
+
 
         addSiteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,5 +137,45 @@ public class AddSiteActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void onDateIconClicked() {
+        dateIcon = findViewById(R.id.calendar_icon);
+
+        dateIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // the instance of our calendar.
+                final Calendar c = Calendar.getInstance();
+
+                // on below line we are getting
+                // our day, month and year.
+                int year = c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH);
+                int day = c.get(Calendar.DAY_OF_MONTH);
+
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        // on below line we are passing context.
+                        AddSiteActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                pickedDate = Integer.toString(dayOfMonth) + "/" + Integer.toString(month) + "/" + Integer.toString(year);
+                                dateInput.setText(pickedDate);
+                            }
+
+                        },
+                        // on below line we are passing year,
+                        // month and day for selected date in our date picker.
+                        year, month, day);
+                // at last we are calling show to
+                // display our date picker dialog.
+                datePickerDialog.show();
+
+
+
+            }
+        });
     }
 }
