@@ -60,6 +60,16 @@
         </LinearLayout>
     </ScrollView>
 
+    <!-- New Download Button -->
+    <Button
+        android:id="@+id/download_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Download Register Table"
+        android:backgroundTint="#3CB626"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="16dp" />
+
     <!-- Close Button -->
     <Button
         android:id="@+id/close_button"

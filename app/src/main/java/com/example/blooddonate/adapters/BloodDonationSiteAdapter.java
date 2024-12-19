@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -88,6 +89,7 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
         TextView siteDetails = dialogView.findViewById(R.id.site_details);
         LinearLayout registerTable = dialogView.findViewById(R.id.register_table);
         Button closeButton = dialogView.findViewById(R.id.close_button);
+        Button downloadButton = dialogView.findViewById(R.id.download_button); // New button
 
         // Set site information
         siteName.setText(site.getName());
@@ -98,13 +100,11 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
         // Populate register table
         List<String> registers = site.getRegisters();
         final int[] idx = {0};
-        for(String r: registers) {
-            Log.d("BloodDonataionSiteAdapter", "Registered: " + r);
+        for (String r : registers) {
+            Log.d("BloodDonationSiteAdapter", "Registered: " + r);
             userController.getUserByUID(r, new GetUserCallback() {
                 @Override
                 public void onSuccess(User user) {
-
-
                     String registerName = user.getName();
 
                     // Create a row for each register
@@ -121,7 +121,7 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
                     // Name column
                     TextView nameCol = new TextView(context);
                     nameCol.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-                    nameCol.setText(registerName); // For simplicity, showing the register ID (or map to name if available)
+                    nameCol.setText(registerName); // For simplicity, showing the register name
                     row.addView(nameCol);
 
                     // Add the row to the table
@@ -131,7 +131,7 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
 
                 @Override
                 public void onFailure(Exception exception) {
-                    Log.d("Donationsite Adapter", "Error get user site: " + exception.getMessage());
+                    Log.d("DonationSiteAdapter", "Error fetching user: " + exception.getMessage());
                 }
             });
         }
@@ -141,10 +141,85 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
                 .setView(dialogView)
                 .create();
 
+        // Download Button Click Listener
+        downloadButton.setOnClickListener(v -> {
+            StringBuilder csvData = new StringBuilder("Index,Name\n");
+            idx[0] = 0; // Reset index
+            for (String r : registers) {
+                userController.getUserByUID(r, new GetUserCallback() {
+                    @Override
+                    public void onSuccess(User user) {
+                        String registerName = user.getName();
+                        csvData.append(idx[0] + 1).append(",").append(registerName).append("\n");
+                        idx[0]++;
+
+                        if (idx[0] == registers.size()) { // When all users are fetched
+                            saveCSVToFile(csvData.toString(), site.getName() + "_registers.csv");
+                        }
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFailure(Exception exception) {
+                        Log.d("DonationSiteAdapter", "Error fetching user for download: " + exception.getMessage());
+                    }
+                });
+            }
+        });
+
         closeButton.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
     }
+
+    // Save CSV Data to File
+    private void saveCSVToFile(String csvData, String fileName) {
+        try {
+            // Get the public Downloads directory
+            java.io.File downloadsDir = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS);
+            if (!downloadsDir.exists()) {
+                downloadsDir.mkdirs(); // Create the Downloads directory if it doesn't exist
+            }
+
+            // Create the file in the Downloads directory
+            java.io.File file = new java.io.File(downloadsDir, fileName);
+
+            // Write CSV data to the file
+            java.io.FileOutputStream fos = new java.io.FileOutputStream(file);
+            fos.write(csvData.getBytes());
+            fos.flush();
+            fos.close();
+
+            Log.d("DonationSiteAdapter", "CSV File saved at: " + file.getAbsolutePath());
+            Toast.makeText(context, "CSV saved to Downloads: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+
+            // Notify the system to make the file accessible
+            android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            intent.setData(android.net.Uri.fromFile(file));
+            context.sendBroadcast(intent);
+
+            // Prompt the user to open the file
+            android.net.Uri fileUri = android.net.Uri.fromFile(file);
+            Intent openFileIntent = new Intent(Intent.ACTION_VIEW);
+            openFileIntent.setDataAndType(fileUri, "text/csv");
+            openFileIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            // Check if there's an app to handle CSV files
+            if (openFileIntent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(openFileIntent);
+            } else {
+                Toast.makeText(context, "No app found to open CSV files", Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (Exception e) {
+            Log.e("DonationSiteAdapter", "Error saving CSV", e);
+            Toast.makeText(context, "Failed to save CSV", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+
 
 
     @Override
