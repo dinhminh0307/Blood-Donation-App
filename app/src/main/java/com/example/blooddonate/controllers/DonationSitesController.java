@@ -14,8 +14,8 @@ public class DonationSitesController {
         this.donationSiteService = new DonationSiteService();
     }
 
-    public void addSites(String siteId, BloodDonationSite bloodDonationSite) {
-        this.donationSiteService.addDonationSiteWithCustomID(siteId, bloodDonationSite);
+    public void addSites(BloodDonationSite bloodDonationSite) {
+        this.donationSiteService.addDonationSite(bloodDonationSite);
     }
 
     public void findAllSites(DataFetchCallback<BloodDonationSite> callback) {

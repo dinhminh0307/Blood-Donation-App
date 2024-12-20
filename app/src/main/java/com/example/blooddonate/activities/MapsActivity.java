@@ -23,6 +23,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -47,6 +48,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button confirmButton;
 
     private UserController userController;
+
+    LatLng rmitLocation = new LatLng(10.7291501, 106.6958129);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,20 +79,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    private void setCurrentLocation() {
+        // Add a marker for the specified location (RMIT University - Nam Sài Gòn)
+
+        mMap.addMarker(new MarkerOptions()
+                .position(rmitLocation)
+                .title("RMIT University - Nam Sài Gòn")
+                .snippet("Current Location") // Add a description/snippet
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))); // Use a different color for distinction
+
+        // If the map is in interactive mode, allow selecting a location
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.getUiSettings().setZoomControlsEnabled(true);
 
+        // Set a default view for Vietnam
         LatLng vietnam = new LatLng(14.0583, 108.2772);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(vietnam, 6));
-
+        setCurrentLocation();
         if (isInteractive) {
             setupInteractiveMode();
         } else {
-            fetchAllSites();
+            fetchAllSites(); // Fetch and display all site markers
         }
     }
+
 
     private void setupInteractiveMode() {
         // Allow user to add marker by clicking on the map

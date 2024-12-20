@@ -132,7 +132,7 @@ public class AddSiteActivity extends AppCompatActivity {
                 List<String> registers = new ArrayList<>();
                 String siteId = "S" + userController.getUserId();
                 BloodDonationSite site = new BloodDonationSite(name, location, date, selectedBloodGroup, unit, userController.getUserId(), registers);
-                donationSitesController.addSites(siteId, site);
+                donationSitesController.addSites(site);
                 finish();
             }
         });
