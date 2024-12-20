@@ -1,4 +1,5 @@
 package com.example.blooddonate.dialogs;
+
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,8 +16,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.blooddonate.R;
+import com.example.blooddonate.models.BloodDonationSite;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class FilterDialogFragment extends DialogFragment {
 
@@ -26,12 +30,25 @@ public class FilterDialogFragment extends DialogFragment {
 
     private FilterDialogListener listener;
 
+    private List<BloodDonationSite> listBloodDonationSite = new ArrayList<>();
+
+    public FilterDialogFragment(List<BloodDonationSite> listBloodDonationSite) {
+        this.listBloodDonationSite = listBloodDonationSite;
+    }
+
     public interface FilterDialogListener {
         void onFilterApplied(String city, String bloodType, String date);
     }
 
     public void setFilterDialogListener(FilterDialogListener listener) {
         this.listener = listener;
+    }
+
+    // Method to set previous filter selections
+    public void setPreviousFilters(String city, String bloodType, String date) {
+        this.selectedCity = city;
+        this.selectedBloodType = bloodType;
+        this.selectedDate = date;
     }
 
     @Nullable
@@ -41,6 +58,7 @@ public class FilterDialogFragment extends DialogFragment {
 
         // City EditText
         EditText cityEditText = view.findViewById(R.id.city_edit_text);
+        cityEditText.setText(selectedCity); // Set the previously selected city
 
         // Blood Type Spinner
         Spinner bloodTypeSpinner = view.findViewById(R.id.blood_type_spinner);
@@ -49,8 +67,15 @@ public class FilterDialogFragment extends DialogFragment {
         bloodTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         bloodTypeSpinner.setAdapter(bloodTypeAdapter);
 
-        // Date Picker
+        // Set the previously selected blood type
+        if (!selectedBloodType.isEmpty()) {
+            int spinnerPosition = bloodTypeAdapter.getPosition(selectedBloodType);
+            bloodTypeSpinner.setSelection(spinnerPosition);
+        }
+
+        // Date Picker Button
         Button dateButton = view.findViewById(R.id.date_button);
+        dateButton.setText(selectedDate.isEmpty() ? "Pick a Date" : selectedDate); // Set the previously selected date
         dateButton.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
             DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
@@ -67,10 +92,7 @@ public class FilterDialogFragment extends DialogFragment {
         // Apply Button
         Button applyButton = view.findViewById(R.id.apply_button);
         applyButton.setOnClickListener(v -> {
-            // Get city input
             selectedCity = cityEditText.getText().toString().trim();
-
-            // Get blood type selection
             selectedBloodType = bloodTypeSpinner.getSelectedItem().toString();
 
             if (listener != null) {
@@ -83,14 +105,30 @@ public class FilterDialogFragment extends DialogFragment {
         Button cancelButton = view.findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(v -> dismiss());
 
+        // Clear Filter Button
+        Button clearFilterButton = view.findViewById(R.id.clear_filter_button);
+        clearFilterButton.setOnClickListener(v -> {
+            // Reset all filter selections
+            cityEditText.setText("");
+            bloodTypeSpinner.setSelection(0);
+            selectedDate = "";
+            dateButton.setText("Pick a Date");
+
+            // Notify listener to reset the adapter to original sites
+            if (listener != null) {
+                listener.onFilterApplied("", "", "");
+            }
+            dismiss();
+        });
+
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if(getDialog() != null &&getDialog().getWindow() != null) {
-            // set dialog to fill larger port of the screen
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            // Set dialog to fill larger portion of the screen
             getDialog().getWindow().setLayout(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT

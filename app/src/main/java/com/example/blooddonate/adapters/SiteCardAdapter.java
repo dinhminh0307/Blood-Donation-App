@@ -41,7 +41,7 @@ public class SiteCardAdapter extends RecyclerView.Adapter<SiteCardAdapter.ViewHo
         BloodDonationSite site = sites.get(position);
         holder.siteName.setText(site.getName());
         holder.siteLocation.setText(site.getLocation());
-
+        holder.blood_type.setText(site.getBloodTypes());
         // Dynamically determine if this item is highlighted
         holder.itemView.setBackgroundColor(holder.getAdapterPosition() == highlightedPosition ? Color.LTGRAY : Color.WHITE);
 
@@ -80,7 +80,7 @@ public class SiteCardAdapter extends RecyclerView.Adapter<SiteCardAdapter.ViewHo
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView siteName, siteLocation;
+        TextView siteName, siteLocation,blood_type;
         public Button requestSiteButton;
 
         public ViewHolder(View itemView) {
@@ -88,6 +88,7 @@ public class SiteCardAdapter extends RecyclerView.Adapter<SiteCardAdapter.ViewHo
             siteName = itemView.findViewById(R.id.site_name);
             siteLocation = itemView.findViewById(R.id.site_location);
             requestSiteButton = itemView.findViewById(R.id.site_request_button);
+            blood_type = itemView.findViewById(R.id.blood_type);
         }
     }
 

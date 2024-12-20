@@ -78,5 +78,15 @@
             android:textColor="#FFFFFF"
             android:backgroundTint="#D11113"
             android:layout_marginStart="8dp" />
+
     </LinearLayout>
+    <!-- Clear Filter Button -->
+    <Button
+        android:id="@+id/clear_filter_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#2196F3"
+        android:text="Clear Filters"
+        android:layout_marginTop="16dp" />
 </LinearLayout>

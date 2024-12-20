@@ -58,6 +58,7 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
         BloodDonationSite site = filteredSites.get(position);
         holder.name.setText(site.getName());
         holder.location.setText(site.getLocation());
+        holder.blood_type.setText(site.getBloodTypes());
 
         if(isMySite) {
             holder.requestSiteButton.setText("View Donation Site");
@@ -230,32 +231,38 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
     // Method to filter out sites owned by the current user
     public void updateData(List<BloodDonationSite> newSites, boolean mySite) {
         this.sites = new ArrayList<>(newSites);
-        // Filter out sites where the owner matches the current user
-        this.filteredSites = new ArrayList<>();
-        for (BloodDonationSite site : sites) {
-            this.filteredSites.add(site);
-        }
-
+        this.filteredSites = new ArrayList<>(newSites); // Update filtered list to match new data
         isMySite = mySite;
 
         notifyDataSetChanged(); // Notify RecyclerView about data change
     }
 
-    // Filter method (e.g., by first letter)
-    public void filterByFirstLetter(String letter) {
-        List<BloodDonationSite> tempFiltered = new ArrayList<>();
-        for (BloodDonationSite site : sites) {
-            if (!site.getOwner().equals(currentUserId) &&
-                    site.getName().toLowerCase().startsWith(letter.toLowerCase())) {
-                tempFiltered.add(site);
+    // Method to filter sites based on the search query
+    public void filterByQuery(String query) {
+        if (query.isEmpty()) {
+            // If query is empty, reset to show all sites
+            filteredSites = new ArrayList<>(sites);
+        } else {
+            // Filter the sites whose name contains the query
+            List<BloodDonationSite> tempFiltered = new ArrayList<>();
+            for (BloodDonationSite site : sites) {
+                if (site.getName().toLowerCase().contains(query)) {
+                    tempFiltered.add(site);
+                }
             }
+            filteredSites = tempFiltered;
         }
-        filteredSites = tempFiltered;
+
+        // Notify RecyclerView about the changes
         notifyDataSetChanged();
     }
 
+
+
+
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView name, location;
+        public TextView name, location, blood_type;
         public Button requestSiteButton;
 
         public ViewHolder(View itemView) {
@@ -263,6 +270,7 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
             name = itemView.findViewById(R.id.site_name);
             location = itemView.findViewById(R.id.site_location);
             requestSiteButton = itemView.findViewById(R.id.site_request_button);
+            blood_type = itemView.findViewById(R.id.blood_type);
         }
     }
 }

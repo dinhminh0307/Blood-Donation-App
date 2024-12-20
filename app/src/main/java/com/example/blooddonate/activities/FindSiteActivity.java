@@ -51,6 +51,10 @@ public class FindSiteActivity extends AppCompatActivity {
 
     String currentUserId;
 
+    private String previousCity = "";
+    private String previousBloodType = "";
+    private String previousDate = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,15 +118,38 @@ public class FindSiteActivity extends AppCompatActivity {
 
     private void onFilterClicked() {
         filter.setOnClickListener(v -> {
-            FilterDialogFragment filterDialog = new FilterDialogFragment();
+            // Show the FilterDialogFragment
+            FilterDialogFragment filterDialog = new FilterDialogFragment(sites);
+            filterDialog.setPreviousFilters(previousCity, previousBloodType, previousDate); // Pass previous selections
             filterDialog.setFilterDialogListener((city, bloodType, date) -> {
-                // Apply filter logic if required
-                Log.d("Filters", "City: " + city + ", Blood Type: " + bloodType + ", Date: " + date);
-                // You can add more filtering logic here if needed
+                // Save the selected filters
+                previousCity = city;
+                previousBloodType = bloodType;
+                previousDate = date;
+
+                if (city.isEmpty() && bloodType.isEmpty() && date.isEmpty()) {
+                    // Reset to show all sites
+                    adapter.updateData(sites, false);
+                } else {
+                    // Filter logic
+                    List<BloodDonationSite> filteredSites = new ArrayList<>();
+                    for (BloodDonationSite site : sites) {
+                        boolean matchesCity = city.isEmpty() || site.getLocation().toLowerCase().contains(city.toLowerCase());
+                        boolean matchesBloodType = bloodType.isEmpty() || site.getBloodTypes().equalsIgnoreCase(bloodType);
+                        boolean matchesDate = date.isEmpty() || site.getDate().equalsIgnoreCase(date);
+
+                        if (matchesCity && matchesBloodType && matchesDate) {
+                            filteredSites.add(site);
+                        }
+                    }
+                    adapter.updateData(filteredSites, false);
+                }
             });
             filterDialog.show(getSupportFragmentManager(), "FilterDialog");
         });
     }
+
+
 
     private void onSearchInputChanged() {
         searchEditText.addTextChangedListener(new android.text.TextWatcher() {
@@ -133,8 +160,9 @@ public class FindSiteActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Apply the filter as the user types
-                adapter.filterByFirstLetter(s.toString().trim());
+                // Filter the sites based on the search query
+                String query = s.toString().trim().toLowerCase();
+                adapter.filterByQuery(query);
             }
 
             @Override
@@ -143,6 +171,7 @@ public class FindSiteActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private void onTabClicked() {
         tabMySites.setOnClickListener(v -> showMySites());
