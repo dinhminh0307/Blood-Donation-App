@@ -1,5 +1,6 @@
 package com.example.blooddonate.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.blooddonate.R;
 import com.example.blooddonate.callbacks.LoginCallback;
+import com.example.blooddonate.controllers.AdminController;
 import com.example.blooddonate.services.UserService;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -25,12 +27,15 @@ public class LoginActivity extends AppCompatActivity {
 
     UserService userService;
 
+    AdminController adminController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
         userService = new UserService();
+        adminController = new AdminController();
 
         onLoginButtonClicked();
     }
@@ -43,26 +48,48 @@ public class LoginActivity extends AppCompatActivity {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = emailInput.getText().toString();
-                String password = passwordInput.getText().toString();
+                String email = emailInput.getText().toString().trim();
+                String password = passwordInput.getText().toString().trim();
 
-                if(email.isEmpty() || password.isEmpty()) {
+                if (email.isEmpty() || password.isEmpty()) {
+                    Log.d("Login Activity", "Email or password is empty");
                     return;
                 }
 
-                userService.login(email, password, new LoginCallback() {
+                // First, try to log in as an admin
+                adminController.adminLogin(email, password, new LoginCallback() {
                     @Override
-                    public void onSuccess(FirebaseUser user) {
-                        Log.d("Login Activity", "Signin successfully");
-                        finish();
+                    public void onSuccess(FirebaseUser admin) {
+                        Log.d("Login Activity", "Admin login successful");
+                        // Redirect to Admin Dashboard
+                        // Use an intent to start an admin-specific activity
+                        Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
+                        startActivity(intent);
                     }
 
                     @Override
                     public void onFailure(Exception exception) {
-                        Log.d("Login Activity", "Signin failed " + exception.getMessage());
+                        Log.d("Login Activity", "Admin login failed: " + exception.getMessage());
+
+                        // If not an admin, attempt user login
+                        userService.login(email, password, new LoginCallback() {
+                            @Override
+                            public void onSuccess(FirebaseUser user) {
+                                Log.d("Login Activity", "User login successful");
+                                // Redirect to User Dashboard
+                                // Use an intent to start a user-specific activity
+                                finish();
+                            }
+
+                            @Override
+                            public void onFailure(Exception exception) {
+                                Log.d("Login Activity", "User login failed: " + exception.getMessage());
+                            }
+                        });
                     }
                 });
             }
         });
     }
+
 }

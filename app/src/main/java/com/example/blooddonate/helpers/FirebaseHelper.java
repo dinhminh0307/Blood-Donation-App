@@ -91,6 +91,76 @@ public class FirebaseHelper {
                 });
     }
 
+    public void adminLogin(String email, String password, LoginCallback callback) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Login succeeded
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user != null) {
+                                Log.d(TAG, "Admin: " + user.getUid());
+                                // Check if the user is in the Admins collection
+                                db.collection("admins").document(user.getUid()).get()
+                                        .addOnCompleteListener(adminCheckTask -> {
+                                            if (adminCheckTask.isSuccessful()) {
+                                                DocumentSnapshot document = adminCheckTask.getResult();
+                                                if (document.exists()) {
+                                                    // User is an admin
+                                                    Log.d(TAG, "Admin login successful");
+                                                    callback.onSuccess(user);
+                                                } else {
+                                                    // User is not an admin
+                                                    Log.w(TAG, "Admin login failed: Not an admin");
+                                                    callback.onFailure(new Exception("Access denied: Not an admin"));
+                                                }
+                                            } else {
+                                                Log.e(TAG, "Error checking admin status", adminCheckTask.getException());
+                                                callback.onFailure(adminCheckTask.getException());
+                                            }
+                                        });
+                            } else {
+                                Log.w(TAG, "No user returned after login");
+                                callback.onFailure(new Exception("Failed to retrieve user after login"));
+                            }
+                        } else {
+                            // Login failed
+                            Log.w(TAG, "Admin login failed", task.getException());
+                            callback.onFailure(task.getException());
+                        }
+                    }
+                });
+    }
+
+    public void getCurrentAdmin(GetUserCallback callback) {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            userId = currentUser.getUid();
+            db.collection("admins").document(userId).get()
+                    .addOnSuccessListener(document -> {
+                        if (document.exists()) {
+                            User user = document.toObject(User.class);
+                            if (user != null) {
+                                Log.d(TAG, "User retrieved: " + user.getName());
+                                callback.onSuccess(user);
+                            } else {
+                                callback.onFailure(new Exception("Failed to parse User object."));
+                            }
+                        } else {
+                            callback.onFailure(new Exception("User document does not exist."));
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "Error retrieving user document", e);
+                        callback.onFailure(e);
+                    });
+        } else {
+            callback.onFailure(new Exception("No authenticated user found."));
+        }
+    }
+
+
     public String getUserId() {
         return this.userId;
     }
