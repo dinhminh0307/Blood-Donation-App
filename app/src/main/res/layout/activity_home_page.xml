@@ -6,6 +6,7 @@
     android:background="#FFF7F7"
     android:padding="16dp">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,17 +22,6 @@
 
             <!-- Logo and Title -->
 
-            <!-- Notification Icon -->
-
-            <ImageView
-                android:id="@+id/notification_icon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="8dp"
-                android:contentDescription="Notification"
-                android:src="@drawable/ic_notification"
-                android:tint="#800000" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -52,9 +42,30 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Ariyankuppam"
+                    android:text="Viet nam"
                     android:textColor="#800000"
                     android:textSize="16sp" />
+
+                <ImageView
+                    android:id="@+id/notification_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="Notification Icon"
+                    android:src="@drawable/ic_notification"
+                    android:tint="#800000" />
+
+                <View
+                    android:id="@+id/notification_dot"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:layout_alignTop="@+id/notification_icon"
+                    android:layout_alignEnd="@+id/notification_icon"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/notification_dot_background"
+                    android:visibility="gone" />
+
+
             </LinearLayout>
         </RelativeLayout>
 

@@ -15,11 +15,15 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.blooddonate.R;
 import com.example.blooddonate.callbacks.DataFetchCallback;
+import com.example.blooddonate.callbacks.GetUserCallback;
 import com.example.blooddonate.controllers.DonationSitesController;
+import com.example.blooddonate.controllers.NotificationController;
 import com.example.blooddonate.controllers.RequestFormController;
 import com.example.blooddonate.controllers.UserController;
 import com.example.blooddonate.models.BloodDonationSite;
+import com.example.blooddonate.models.Notification;
 import com.example.blooddonate.models.RequestQuestionForm;
+import com.example.blooddonate.models.User;
 import com.google.firebase.firestore.FieldValue;
 
 import java.util.ArrayList;
@@ -41,6 +45,8 @@ public class RequestActivity extends AppCompatActivity {
     private boolean isValidated = true;
 
     private BloodDonationSite site;
+
+    private NotificationController notificationController;
 
     String siteUID;
 
@@ -85,6 +91,7 @@ public class RequestActivity extends AppCompatActivity {
         skipText = findViewById(R.id.skip_text);
 
         site = getIntent().getParcelableExtra("site_data");
+        notificationController = new NotificationController();
 
         requestFormController = new RequestFormController();
         donationSitesController = new DonationSitesController();
@@ -170,6 +177,21 @@ public class RequestActivity extends AppCompatActivity {
                         donationSitesController.updateDonationSite(siteUID, "registers", FieldValue.arrayUnion(userController.getUserId()));
                         userController.updateUserField(userController.getUserId(), "listRegistered", FieldValue.arrayUnion(siteUID));
                         Toast.makeText(RequestActivity.this, "All questions completed, you are qualified", Toast.LENGTH_SHORT).show();
+
+                        // get current user to get the notification
+                        userController.getCurrentUser(new GetUserCallback() {
+                            @Override
+                            public void onSuccess(User user) {
+                                notificationController.addNotification(new Notification(site.getOwner(), user.getName() + " has registered to " + site.getName()));
+                            }
+
+                            @Override
+                            public void onFailure(Exception exception) {
+
+                            }
+                        });
+                        // add to notification
+
                         finish();
                     }
 
