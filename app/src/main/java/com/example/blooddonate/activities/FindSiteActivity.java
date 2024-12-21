@@ -207,7 +207,7 @@ public class FindSiteActivity extends AppCompatActivity {
         // Filter sites not owned by the current user
         List<BloodDonationSite> otherSites = new ArrayList<>();
         for (BloodDonationSite site : sites) {
-            if (!site.getOwner().equals(currentUserId)) {
+            if (!site.getOwner().equals(currentUserId) && !site.getRegisters().contains(currentUserId)) {
                 otherSites.add(site);
             }
         }
