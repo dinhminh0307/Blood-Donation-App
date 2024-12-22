@@ -1,6 +1,9 @@
 package com.example.blooddonate.activities;
 
+import android.app.Activity;
 import android.content.Intent;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -88,23 +91,63 @@ public class FindSiteActivity extends AppCompatActivity {
         onNavClicked();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Re-fetch the current user
+        userController.getCurrentUser(new GetUserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                Log.d("FindSiteActivity", "Current user fetched: " + user.getName());
+                currentUserId = userController.getUserId(); // Update current user ID
+
+                // Fetch and display sites
+                fetchSites();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("FindSiteActivity", "Failed to fetch current user", e);
+            }
+        });
+    }
+
     private void initAdapter() {
         // Initialize the adapter with an empty list
-        adapter = new BloodDonationSiteAdapter(this, sites, currentUserId);
+        ActivityResultLauncher<Intent> mapResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        // Extract the location from the result
+                        String selectedLocation = result.getData().getStringExtra("selected_location");
+                        Log.d("FindSiteActivity", "Selected Location: " + selectedLocation);
+
+                        // Update the UI or the data in the adapter
+                        adapter.updateSelectedLocation(selectedLocation);
+                    }
+                }
+        );
+
+        adapter = new BloodDonationSiteAdapter(this, sites, currentUserId, mapResultLauncher);
         siteRecycleView.setLayoutManager(new LinearLayoutManager(this));
         siteRecycleView.setAdapter(adapter);
     }
 
-    private void fetchSites() {
+    public void fetchSites() {
         donationSitesController.findAllSites(new DataFetchCallback<BloodDonationSite>() {
             @Override
             public void onSuccess(List<BloodDonationSite> data) {
-                // Update the main data list
+                // Clear and update the sites list
                 sites.clear();
                 sites.addAll(data);
 
-                // Initially show "Other Sites"
-                showOtherSites();
+                // Show the currently selected tab's data
+                if (tabMySites.getCurrentTextColor() == getResources().getColor(android.R.color.black)) {
+                    showMySites();
+                } else {
+                    showOtherSites();
+                }
 
                 Log.d("Firestore", "Fetched sites: " + sites.size());
             }
@@ -115,6 +158,7 @@ public class FindSiteActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private void onFilterClicked() {
         filter.setOnClickListener(v -> {
@@ -180,39 +224,46 @@ public class FindSiteActivity extends AppCompatActivity {
 
     private void showMySites() {
         // Update tab UI
-        tabMySites.setTextColor(getResources().getColor(android.R.color.black)); // Selected tab color
-        tabOtherSites.setTextColor(getResources().getColor(android.R.color.darker_gray)); // Unselected tab color
+        tabMySites.setTextColor(getResources().getColor(android.R.color.black));
+        tabOtherSites.setTextColor(getResources().getColor(android.R.color.darker_gray));
 
-        tabMySites.setBackgroundColor(getResources().getColor(android.R.color.white)); // Selected tab background
-        tabOtherSites.setBackgroundColor(getResources().getColor(android.R.color.transparent)); // Unselected tab background
+        tabMySites.setBackgroundColor(getResources().getColor(android.R.color.white));
+        tabOtherSites.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
         // Filter sites owned by the current user
         List<BloodDonationSite> mySites = new ArrayList<>();
         for (BloodDonationSite site : sites) {
-            if (site.getOwner().equals(currentUserId)) {
+            if (site.getOwner() != null && site.getOwner().equals(currentUserId)) {
                 mySites.add(site);
             }
         }
+
+        Log.d("FindSiteActivity", "My Sites Count: " + mySites.size());
         adapter.updateData(mySites, true);
     }
 
     private void showOtherSites() {
         // Update tab UI
-        tabMySites.setTextColor(getResources().getColor(android.R.color.darker_gray)); // Unselected tab color
-        tabOtherSites.setTextColor(getResources().getColor(android.R.color.black)); // Selected tab color
+        tabMySites.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        tabOtherSites.setTextColor(getResources().getColor(android.R.color.black));
 
-        tabMySites.setBackgroundColor(getResources().getColor(android.R.color.transparent)); // Unselected tab background
-        tabOtherSites.setBackgroundColor(getResources().getColor(android.R.color.white)); // Selected tab background
+        tabMySites.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        tabOtherSites.setBackgroundColor(getResources().getColor(android.R.color.white));
 
         // Filter sites not owned by the current user
         List<BloodDonationSite> otherSites = new ArrayList<>();
         for (BloodDonationSite site : sites) {
             if (!site.getOwner().equals(currentUserId) && !site.getRegisters().contains(currentUserId)) {
                 otherSites.add(site);
+                Log.d("FindSiteActivity", "Data owner UID: " + site.getOwner() + "My UID " + currentUserId);
             }
         }
+
+        Log.d("FindSiteActivity", "Other Sites Count: " + otherSites.size());
         adapter.updateData(otherSites, false);
     }
+
+
 
     private  void onNavClicked() {
         homeNav = findViewById(R.id.home_nav);

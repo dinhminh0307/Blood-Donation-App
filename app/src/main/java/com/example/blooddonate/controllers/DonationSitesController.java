@@ -29,4 +29,8 @@ public class DonationSitesController {
     public  void updateDonationSite(String siteId, String fieldName, Object value) {
         this.donationSiteService.updateField(siteId, fieldName, value);
     }
+
+    public void updateDonationSiteByModel(BloodDonationSite siteModel, Map<String, Object> updatedFields, DataFetchCallback<BloodDonationSite> callback) {
+        this.donationSiteService.updateSiteByModel(siteModel, updatedFields, callback);
+    }
 }

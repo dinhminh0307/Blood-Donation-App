@@ -92,6 +92,42 @@ public class DonationSiteService {
         return  site;
     }
 
+    public void updateSiteByModel(BloodDonationSite siteModel, Map<String, Object> updatedFields, DataFetchCallback<BloodDonationSite> callback) {
+        // Find the site ID by matching the provided model
+        firestore.collection("bloodDonationSites")
+                .whereEqualTo("name", siteModel.getName())
+                .whereEqualTo("location", siteModel.getLocation())
+                .whereEqualTo("date", siteModel.getDate())
+                .whereEqualTo("bloodTypes", siteModel.getBloodTypes())
+                .whereEqualTo("units", siteModel.getUnits())
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        // Get the first matching document
+                        String siteId = querySnapshot.getDocuments().get(0).getId();
+
+                        // Update the site using the document ID
+                        firestore.collection("bloodDonationSites")
+                                .document(siteId)
+                                .update(updatedFields)
+                                .addOnSuccessListener(aVoid -> {
+                                    Log.d("Firestore", "Site updated successfully: " + siteId);
+                                    callback.onSuccess(null); // Indicate success
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("Firestore", "Error updating site: " + siteId, e);
+                                    callback.onFailure(e); // Indicate failure
+                                });
+                    } else {
+                        callback.onFailure(new Exception("No matching site found."));
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error finding site for update", e);
+                    callback.onFailure(e);
+                });
+    }
+
     public void findAllSites(DataFetchCallback<BloodDonationSite> callback) {
         firestore.collection("bloodDonationSites")
                 .get()

@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="Find Donor"
+            android:text="Find Donation Site"
             android:textColor="#FFFFFF"
             android:textSize="24sp"
             android:textStyle="bold" />
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="Blood donors around you"
+            android:text="Blood donation sites around you"
             android:textColor="#FFFFFF"
             android:textSize="14sp" />
     </LinearLayout>

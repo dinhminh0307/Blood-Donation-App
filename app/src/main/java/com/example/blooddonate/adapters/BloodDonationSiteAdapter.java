@@ -1,28 +1,45 @@
 package com.example.blooddonate.adapters;
 
+import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.icu.util.Calendar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.blooddonate.R;
+import com.example.blooddonate.activities.AddSiteActivity;
+import com.example.blooddonate.activities.FindSiteActivity;
+import com.example.blooddonate.activities.MapsActivity;
 import com.example.blooddonate.activities.RequestActivity;
+import com.example.blooddonate.callbacks.DataFetchCallback;
 import com.example.blooddonate.callbacks.GetUserCallback;
+import com.example.blooddonate.controllers.DonationSitesController;
 import com.example.blooddonate.controllers.UserController;
 import com.example.blooddonate.models.BloodDonationSite;
 import com.example.blooddonate.models.User;
 import com.example.blooddonate.services.SearchEngineService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonationSiteAdapter.ViewHolder> {
     private List<BloodDonationSite> sites; // Main list of all sites
@@ -38,14 +55,28 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
 
     private SearchEngineService searchEngineService;
 
-    public BloodDonationSiteAdapter(Context context, List<BloodDonationSite> sites, String currentUserId) {
+    String pickedDate = "";
+
+    EditText locationInput;
+
+    DonationSitesController donationSitesController;
+
+
+
+
+    private ActivityResultLauncher<Intent> mapResultLauncher;
+
+    public BloodDonationSiteAdapter(Context context, List<BloodDonationSite> sites, String currentUserId, ActivityResultLauncher<Intent> mapResultLauncher) {
         this.context = context;
         this.sites = sites;
         this.filteredSites = new ArrayList<>(sites); // Initialize filtered list
         this.currentUserId = currentUserId;
+        this.mapResultLauncher = mapResultLauncher; // Store the launcher
         searchEngineService = new SearchEngineService();
         userController = new UserController();
+        donationSitesController = new DonationSitesController();
     }
+
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -81,6 +112,152 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
         });
     }
 
+    private void onDateIconClicked(View dialogView) {
+        ImageView dateIcon = dialogView.findViewById(R.id.edit_calendar_icon);
+        EditText dateInput = dialogView.findViewById(R.id.edit_date_input);
+
+        dateIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // the instance of our calendar.
+                final Calendar c = Calendar.getInstance();
+
+                // on below line we are getting
+                // our day, month and year.
+                int year = c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH);
+                int day = c.get(Calendar.DAY_OF_MONTH);
+
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        // on below line we are passing context.
+                        context,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                pickedDate = Integer.toString(dayOfMonth) + "/" + Integer.toString(month) + "/" + Integer.toString(year);
+                                dateInput.setText(pickedDate);
+                            }
+
+                        },
+                        // on below line we are passing year,
+                        // month and day for selected date in our date picker.
+                        year, month, day);
+                // at last we are calling show to
+                // display our date picker dialog.
+                datePickerDialog.show();
+
+
+            }
+        });
+    }
+
+
+
+    private void onMapSelection(View dialogView) {
+        ImageView mapIcon = dialogView.findViewById(R.id.edit_map_icon);
+        mapIcon.setOnClickListener(v -> {
+            // Launch the MapsActivity using the launcher
+            Intent intent = new Intent(context, MapsActivity.class);
+            intent.putExtra("isInteractive", true); // Enable location selection
+            mapResultLauncher.launch(intent); // Use the launcher
+        });
+    }
+
+    public void updateSelectedLocation(String location) {
+        // Update the relevant location field in the UI or the data object
+        Log.d("BloodDonationSiteAdapter", "Updated location: " + location);
+        locationInput.setText(location);
+        // Example: Update a field or notify the dataset
+        // You can trigger this to update the RecyclerView
+    }
+
+
+    private void showEditSiteDialog(BloodDonationSite site) {
+        // Inflate the custom layout
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.edit_site_dialog, null);
+
+        // set new site
+        BloodDonationSite savedSite = new BloodDonationSite();
+        savedSite.setBloodDonationSite(site);
+
+        // Initialize fields
+        EditText siteNameInput = dialogView.findViewById(R.id.edit_site_name_input);
+        Spinner bloodGroupSpinner = dialogView.findViewById(R.id.edit_blood_group_spinner);
+        EditText unitsInput = dialogView.findViewById(R.id.edit_units_input);
+        EditText dateInput = dialogView.findViewById(R.id.edit_date_input);
+        locationInput = dialogView.findViewById(R.id.edit_location_input);
+
+        // Pre-fill data
+        siteNameInput.setText(site.getName());
+        // TODO: Set spinner value for blood group
+        unitsInput.setText(String.valueOf(site.getUnits()));
+        dateInput.setText(site.getDate());
+        locationInput.setText(site.getLocation());
+
+        // Create and show dialog
+        AlertDialog dialog = new AlertDialog.Builder(context)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create();
+
+        // edit proccess
+        onDateIconClicked(dialogView);
+        onMapSelection(dialogView);
+
+
+        // Set up buttons
+        dialogView.findViewById(R.id.save_button).setOnClickListener(v -> {
+            // Save changes
+            Map<String, Object> updatedFields = new HashMap<>();
+            updatedFields.put("name", siteNameInput.getText().toString());
+            updatedFields.put("location", locationInput.getText().toString());
+            updatedFields.put("units", Double.parseDouble(unitsInput.getText().toString()));
+            updatedFields.put("date", dateInput.getText().toString());
+
+            donationSitesController.updateDonationSiteByModel(site, updatedFields, new DataFetchCallback<BloodDonationSite>() {
+                @Override
+                public void onSuccess(List<BloodDonationSite> data) {
+                    if (data == null || data.isEmpty()) {
+                        Log.e("BloodDonationSiteAdapter", "Received null or empty data in onSuccess");
+
+                        dialog.dismiss();
+                        return;
+                    }
+
+                    // Update the site in the local list
+                    int index = sites.indexOf(site);
+                    if (index != -1) {
+                        sites.set(index, data.get(0));
+                        notifyItemChanged(index); // Notify RecyclerView of the change
+                    }
+
+                    Toast.makeText(context, "Site updated successfully", Toast.LENGTH_SHORT).show();
+
+                    // Explicitly refresh data in the activity
+                    if (context instanceof FindSiteActivity) {
+                        ((FindSiteActivity) context).fetchSites();
+                    }
+
+                    dialog.dismiss();
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Log.d("Blood Donation Adapter", "Failed to update site" + e.getMessage());
+                    Toast.makeText(context, "Failed to update site", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+
+        dialogView.findViewById(R.id.cancel_button).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+
     private void showSiteInfoDialog(BloodDonationSite site) {
         // Inflate the custom dialog layout
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_site_info, null);
@@ -91,6 +268,7 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
         LinearLayout registerTable = dialogView.findViewById(R.id.register_table);
         Button closeButton = dialogView.findViewById(R.id.close_button);
         Button downloadButton = dialogView.findViewById(R.id.download_button); // New button
+        ImageView editSite = dialogView.findViewById(R.id.edit_site_info_icon);
 
         // Set site information
         siteName.setText(site.getName());
@@ -170,6 +348,14 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
 
         closeButton.setOnClickListener(v -> dialog.dismiss());
 
+        // edit icon
+        editSite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showEditSiteDialog(site);
+            }
+        });
+
         dialog.show();
     }
 
@@ -228,7 +414,7 @@ public class BloodDonationSiteAdapter extends RecyclerView.Adapter<BloodDonation
         return filteredSites.size();
     }
 
-    // Method to filter out sites owned by the current user
+    // Method to filter out sdoubleites owned by the current user
     public void updateData(List<BloodDonationSite> newSites, boolean mySite) {
         this.sites = new ArrayList<>(newSites);
         this.filteredSites = new ArrayList<>(newSites); // Update filtered list to match new data
