@@ -191,30 +191,7 @@
             </LinearLayout>
 
             <!-- Find Donation Site -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="74dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/find_donation_site_icon"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_find_donor"
-                    android:contentDescription="Find Donation Site Icon" />
-
-                <TextView
-                    android:id="@+id/find_donation_site_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="FIND SITE"
-                    android:textColor="#800000"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
         </LinearLayout>
 
         <!-- Bottom Navigation -->

@@ -136,7 +136,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onSuccess(List<BloodDonationSite> data) {
                 sites.clear();
                 for(BloodDonationSite tmp : data) {
-                    if(!tmp.getOwner().equals(userController.getUserId())) {
+                    if(!tmp.getOwner().equals(userController.getUserId()) && !tmp.getRegisters().contains(userController.getUserId())) {
                         sites.add(tmp);
                     }
                 }
