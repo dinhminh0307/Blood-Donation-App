@@ -40,6 +40,10 @@ public class AdminActivity extends AppCompatActivity {
     private List<BloodDonationSite> currentPageData = new ArrayList<>();
     private List<User> donors = new ArrayList<>();
 
+    private int donorCurrentPage = 0; // Track the current page for donors
+    private static final int DONORS_ROWS_PER_PAGE = 5; // Number of rows per page for donors
+    private List<User> donorCurrentPageData = new ArrayList<>(); // Data for the current donor page
+
     private int currentPage = 0;
     private static final int ROWS_PER_PAGE = 5;
 
@@ -92,6 +96,8 @@ public class AdminActivity extends AppCompatActivity {
                 updateSitesRecyclerView();
             }
         });
+
+        setupPaginationButtons();
 
         onListDonorsClicked();
         onListSitesClicked();
@@ -166,9 +172,9 @@ public class AdminActivity extends AppCompatActivity {
         }
 
         int start = currentPage * ROWS_PER_PAGE;
-        int end = Math.min(start + ROWS_PER_PAGE, sites.size());
+        int end = Math.min(start + ROWS_PER_PAGE, sites.size()); // Limit rows per page to 5
         currentPageData.clear();
-        currentPageData.addAll(sites.subList(start, end));
+        currentPageData.addAll(sites.subList(start, end)); // Only add rows within this range
 
         if (siteAdapter == null) {
             siteAdapter = new DonationSiteTableAdapter(this, currentPageData);
@@ -213,6 +219,63 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
+    // Update this method to handle donor pagination
+    private void updateDonorsRecyclerView() {
+        if (donors == null || donors.isEmpty()) {
+            return; // Avoid NullPointerException or trying to update empty data
+        }
+
+        int start = donorCurrentPage * DONORS_ROWS_PER_PAGE;
+        int end = Math.min(start + DONORS_ROWS_PER_PAGE, donors.size()); // Limit rows per page to 5
+        donorCurrentPageData.clear();
+        donorCurrentPageData.addAll(donors.subList(start, end)); // Only add rows within this range
+
+        if (donorAdapter == null) {
+            donorAdapter = new DonorTableAdapter(this, donorCurrentPageData);
+            recyclerView.setAdapter(donorAdapter);
+        } else {
+            recyclerView.setAdapter(donorAdapter); // Ensure the correct adapter is set
+            donorAdapter.notifyDataSetChanged(); // Notify adapter of data changes
+        }
+    }
+
+
+
+    // Modify button click listeners to handle donor pagination
+    private void setupPaginationButtons() {
+        Button previousButton = findViewById(R.id.previous_page_button);
+        Button nextButton = findViewById(R.id.next_page_button);
+
+        previousButton.setOnClickListener(v -> {
+            if (showingSites) {
+                if (currentPage > 0) {
+                    currentPage--;
+                    updateSitesRecyclerView();
+                }
+            } else {
+                if (donorCurrentPage > 0) {
+                    donorCurrentPage--;
+                    updateDonorsRecyclerView();
+                }
+            }
+        });
+
+        nextButton.setOnClickListener(v -> {
+            if (showingSites) {
+                if ((currentPage + 1) * ROWS_PER_PAGE < sites.size()) {
+                    currentPage++;
+                    updateSitesRecyclerView();
+                }
+            } else {
+                if ((donorCurrentPage + 1) * DONORS_ROWS_PER_PAGE < donors.size()) {
+                    donorCurrentPage++;
+                    updateDonorsRecyclerView();
+                }
+            }
+        });
+    }
+
+
     private void onListDonorsClicked() {
         listDonorImage.setOnClickListener(v -> {
             if (!showingSites) return; // Already showing donors, no action needed
@@ -225,10 +288,36 @@ public class AdminActivity extends AppCompatActivity {
             findViewById(R.id.donors_header).setVisibility(View.VISIBLE);
             findViewById(R.id.sites_header).setVisibility(View.GONE);
 
-            donorAdapter = new DonorTableAdapter(AdminActivity.this, donors);
-            recyclerView.setAdapter(donorAdapter);
+            donorCurrentPage = 0; // Reset donor pagination to the first page
+
+            // Fetch updated donor data from the server
+            userController.getAllUsers(new DataFetchCallback<User>() {
+                @Override
+                public void onSuccess(List<User> data) {
+                    if (data != null) {
+                        donors.clear();
+                        donors.addAll(data);
+                        donorCurrentPageData.clear();
+                        int start = donorCurrentPage * DONORS_ROWS_PER_PAGE;
+                        int end = Math.min(start + DONORS_ROWS_PER_PAGE, donors.size());
+                        donorCurrentPageData.addAll(donors.subList(start, end));
+
+                        // Explicitly set the donor adapter
+                        donorAdapter = new DonorTableAdapter(AdminActivity.this, donorCurrentPageData);
+                        recyclerView.setAdapter(donorAdapter);
+                        donorAdapter.notifyDataSetChanged();
+                    }
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Log.e("AdminActivity", "Error fetching donors: " + e.getMessage());
+                }
+            });
         });
     }
+
+
 
     private void onListSitesClicked() {
         listSitesImage.setOnClickListener(v -> {
@@ -237,26 +326,26 @@ public class AdminActivity extends AppCompatActivity {
             showingSites = true; // Switch to showing sites
             Log.d("Admin Activity", "Switching to site table");
             tableIndicator.setText("Blood Donation Sites table");
+
             // Show sites header and hide donors header
             findViewById(R.id.sites_header).setVisibility(View.VISIBLE);
             findViewById(R.id.donors_header).setVisibility(View.GONE);
 
-            // Update currentPageData to reflect the correct site data
+            currentPage = 0; // Reset site pagination to the first page
+
+            currentPageData.clear();
             int start = currentPage * ROWS_PER_PAGE;
             int end = Math.min(start + ROWS_PER_PAGE, sites.size());
-            currentPageData.clear();
             currentPageData.addAll(sites.subList(start, end));
 
-            // Initialize or update the siteAdapter
-            if (siteAdapter == null) {
-                siteAdapter = new DonationSiteTableAdapter(AdminActivity.this, currentPageData);
-                recyclerView.setAdapter(siteAdapter);
-            } else {
-                recyclerView.setAdapter(siteAdapter); // Ensure adapter is switched back
-                siteAdapter.notifyDataSetChanged();
-            }
+            // Explicitly set the site adapter
+            siteAdapter = new DonationSiteTableAdapter(this, currentPageData);
+            recyclerView.setAdapter(siteAdapter);
+            siteAdapter.notifyDataSetChanged();
         });
     }
+
+
 
 
 }
