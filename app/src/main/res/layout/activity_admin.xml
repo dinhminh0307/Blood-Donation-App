@@ -50,7 +50,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Member"
+                        android:text="Admin"
                         android:textSize="14sp"
                         android:textColor="#F44336" />
                 </LinearLayout>
@@ -106,6 +106,7 @@
                     android:padding="16dp">
 
                     <ImageView
+                        android:id="@+id/donors_info_img"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:src="@drawable/ic_blood_group"
@@ -130,6 +131,7 @@
                     android:padding="16dp">
 
                     <ImageView
+                        android:id="@+id/number_sites_id"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:src="@drawable/ic_blood_group"
@@ -147,6 +149,7 @@
 
             <!-- Donation Sites Report Section -->
             <TextView
+                android:id="@+id/table_indicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Blood Donation Sites"
@@ -166,12 +169,15 @@
                 android:elevation="4dp">
 
                 <!-- Table Header -->
+                <!-- Header for Sites Table -->
                 <LinearLayout
+                    android:id="@+id/sites_header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="8dp"
-                    android:background="#E0E0E0">
+                    android:background="#E0E0E0"
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="0dp"
@@ -218,6 +224,45 @@
                         android:textSize="14sp"
                         android:textColor="#000000" />
                 </LinearLayout>
+
+                <!-- Header for Donors Table -->
+                <LinearLayout
+                    android:id="@+id/donors_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp"
+                    android:background="#E0E0E0"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Name"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Phone Number"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Email"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:textColor="#000000" />
+                </LinearLayout>
+
 
                 <!-- RecyclerView for Rows -->
                 <androidx.recyclerview.widget.RecyclerView

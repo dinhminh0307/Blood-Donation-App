@@ -64,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                         // Redirect to Admin Dashboard
                         // Use an intent to start an admin-specific activity
                         Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
+                        intent.putExtra("admin", admin.getEmail());
                         startActivity(intent);
                     }
 

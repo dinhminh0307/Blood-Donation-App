@@ -15,4 +15,8 @@ public class AdminService {
     public void adminLogin(String email, String password, LoginCallback cb) {
         firebaseHelper.adminLogin(email, password, cb);
     }
+
+    public void getCurrentAdmin(GetUserCallback cb) {
+        firebaseHelper.getCurrentAdmin(cb);
+    }
 }
